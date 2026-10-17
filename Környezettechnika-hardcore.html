@@ -1,0 +1,887 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Környezettechnika ZH-gyakorló</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: egyoszlopos „műszerfal": felső fülsor, alatta kártyák; mobilon egymás alá. */
+:root{
+  --bg:#f1f4f0; --surface:#ffffff; --surface2:#e8ede8; --fg:#13211c; --muted:#5a6b64; --line:#cfd9d2;
+  --accent:#0b6b5c; --accent-fg:#ffffff; --accent-soft:#d6ebe5;
+  --amber:#b87503; --amber-soft:#f8e9c8;
+  --good:#1d7a45; --good-soft:#d5efdf; --bad:#b3372c; --bad-soft:#f6dcd8;
+  --f-head:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1613; --surface:#16211d; --surface2:#1d2b26; --fg:#e4eee9; --muted:#9bb0a6; --line:#2c3d36;
+  --accent:#43c4ab; --accent-fg:#06201a; --accent-soft:#17352e;
+  --amber:#e3a63a; --amber-soft:#3a2d10;
+  --good:#52c883; --good-soft:#143323; --bad:#ef7d70; --bad-soft:#3b1b17; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1613; --surface:#16211d; --surface2:#1d2b26; --fg:#e4eee9; --muted:#9bb0a6; --line:#2c3d36;
+  --accent:#43c4ab; --accent-fg:#06201a; --accent-soft:#17352e;
+  --amber:#e3a63a; --amber-soft:#3a2d10;
+  --good:#52c883; --good-soft:#143323; --bad:#ef7d70; --bad-soft:#3b1b17; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font:16px/1.5 var(--f-body);padding-inline:16px;padding-block:0 48px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,a:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:860px;margin-inline:auto}
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px 0}
+.top-in{max-width:860px;margin-inline:auto;display:flex;flex-wrap:wrap;align-items:center;gap:6px 18px}
+.brand{font:700 22px/1 var(--f-head);letter-spacing:.04em;text-transform:uppercase;display:flex;align-items:baseline;gap:8px;padding-block:4px}
+.brand small{font:500 13px var(--f-mono);color:var(--muted);letter-spacing:0;text-transform:none}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;flex:1;min-width:0}
+nav.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:8px 12px;font-weight:600;color:var(--muted);white-space:nowrap}
+nav.tabs button[aria-current="page"]{color:var(--fg);border-bottom-color:var(--accent)}
+.theme-btn{background:none;border:1px solid var(--line);border-radius:6px;padding:4px 9px;color:var(--muted);font-size:13px}
+main{padding-top:20px;display:flex;flex-direction:column;gap:18px}
+h1,h2,h3{font-family:var(--f-head);letter-spacing:.02em;line-height:1.1;margin:0;text-wrap:balance}
+h1{font-size:34px;font-weight:700}
+h2{font-size:24px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+h3{font-size:19px;font-weight:600}
+p{margin:0}
+.lead{color:var(--muted);max-width:62ch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))}
+.modes{display:grid;gap:14px;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:620px){.modes{grid-template-columns:1fr}.brand{order:1}.theme-btn{order:2;margin-left:auto}nav.tabs{order:3;flex-basis:100%}}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{background:var(--accent);color:var(--accent-fg);border:0;border-radius:8px;padding:11px 18px;font-weight:700;min-height:44px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--surface2)}
+.btn.small{padding:6px 12px;min-height:34px;font-size:14px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.mode{display:flex;flex-direction:column;gap:8px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;width:100%}
+.mode:hover{border-color:var(--accent)}
+.mode.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.mode.primary .sub{color:inherit;opacity:.88}
+.mode .t{font:600 21px/1.1 var(--f-head);text-transform:uppercase;letter-spacing:.05em}
+.sub{color:var(--muted);font-size:14.5px}
+.stats{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.stat{border-left:3px solid var(--accent);padding-left:10px}
+.stat b{display:block;font:600 30px/1 var(--f-mono);font-variant-numeric:tabular-nums}
+.stat span{font-size:13px;color:var(--muted)}
+.bar{height:10px;border-radius:5px;background:var(--surface2);overflow:hidden;display:flex}
+.bar i{display:block;height:100%}
+.bar .m{background:var(--good)} .bar .l{background:var(--amber)}
+.topics{display:flex;flex-direction:column;gap:12px}
+.topic-row{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1.4fr) auto;gap:8px 14px;align-items:center}
+.topic-row .nm{font-weight:600;min-width:0}
+.topic-row .nm small{display:block;font-weight:400;color:var(--muted);font-size:13px}
+@media (max-width:560px){.topic-row{grid-template-columns:1fr auto}.topic-row .bar{grid-column:1/-1;order:3}}
+.chip{display:inline-block;font:600 12px var(--f-mono);padding:3px 8px;border-radius:99px;background:var(--surface2);color:var(--muted);letter-spacing:.02em}
+.chip.zh{background:var(--amber-soft);color:var(--amber)}
+.countdown{display:flex;flex-wrap:wrap;gap:12px 28px}
+.cd b{font:700 38px/1 var(--f-head);color:var(--amber)}
+.cd span{display:block;font-size:13px;color:var(--muted)}
+/* kérdés */
+.qhead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.prog{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);transition:width .25s}
+.qtext{font-size:20px;line-height:1.35;font-weight:600;max-width:60ch}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:grid;grid-template-columns:34px 1fr;gap:12px;align-items:start;text-align:left;width:100%;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:12px 14px}
+.opt:hover:not(:disabled){border-color:var(--accent);background:var(--accent-soft)}
+.opt .k{font:600 15px var(--f-mono);display:grid;place-items:center;width:30px;height:30px;border-radius:6px;background:var(--surface2);color:var(--muted)}
+.opt.sel{border-color:var(--accent);background:var(--accent-soft)}
+.opt.ok{border-color:var(--good);background:var(--good-soft)}
+.opt.ok .k{background:var(--good);color:#fff}
+.opt.no{border-color:var(--bad);background:var(--bad-soft)}
+.opt.no .k{background:var(--bad);color:#fff}
+.opt:disabled{cursor:default}
+.expl{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 14px;border-radius:0 8px 8px 0;font-size:15.5px}
+.expl.bad{border-color:var(--bad);background:var(--bad-soft)}
+.expl.good{border-color:var(--good);background:var(--good-soft)}
+.expl b.v{display:block;font:700 13px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;margin-bottom:2px}
+.timer{font:600 20px var(--f-mono);font-variant-numeric:tabular-nums}
+.timer.low{color:var(--bad)}
+.qgrid{display:flex;flex-wrap:wrap;gap:6px}
+.qgrid button{width:36px;height:36px;border-radius:6px;border:1px solid var(--line);background:var(--surface);font:600 13px var(--f-mono)}
+.qgrid button.done{background:var(--accent-soft);border-color:var(--accent)}
+.qgrid button.cur{outline:2px solid var(--fg)}
+.result-big{display:flex;flex-wrap:wrap;align-items:center;gap:6px 28px}
+.grade{font:700 88px/1 var(--f-head);color:var(--accent)}
+.grade.bad{color:var(--bad)}
+.pct{font:600 40px var(--f-mono)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 13px var(--f-mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+td.n,th.n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.tw{overflow-x:auto}
+.cheat{display:flex;flex-direction:column;gap:14px}
+.cheat details{background:var(--surface);border:1px solid var(--line);border-radius:10px}
+.cheat summary{cursor:pointer;padding:14px 16px;font:600 20px var(--f-head);text-transform:uppercase;letter-spacing:.05em;list-style:none;display:flex;justify-content:space-between;gap:10px}
+.cheat summary::after{content:"+";font-family:var(--f-mono)}
+.cheat details[open] summary::after{content:"–"}
+.cheat .in{padding:0 16px 16px;display:flex;flex-direction:column;gap:10px}
+.cheat ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px}
+.cheat .tip{background:var(--amber-soft);border-radius:8px;padding:10px 12px;font-size:15px}
+.review-item{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:8px}
+.ans-line{font-size:15px}
+.ans-line b{font-weight:700}
+.sel-row{display:flex;flex-wrap:wrap;gap:8px}
+select{font:inherit;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;min-height:40px}
+.empty{color:var(--muted);font-style:italic}
+.note{font-size:13.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+<header class="top"><div class="top-in">
+  <div class="brand">KT ZH-gyakorló <small id="qcount"></small></div>
+  <nav class="tabs" id="tabs" aria-label="Fő menü"></nav>
+  <button class="theme-btn" id="themeBtn" type="button" aria-label="Téma váltása">◐ téma</button>
+</div></header>
+<main id="app" aria-live="polite"></main>
+</div>
+<script>
+/* Kérdésbank 1/2: előadás 1-2 (T1-T4). Q(téma, kérdés, HELYES, rossz1, rossz2, rossz3, magyarázat, tanári-példa?) */
+const Q=(t,q,a,b,c,d,e,z)=>({t,q,o:[a,b,c,d],e,z:z?1:0});
+const BANK=[];
+const add=(...x)=>x.forEach(i=>BANK.push(i));
+
+/* ===== T1: Bevezetés, környezetvédelem története ===== */
+add(
+Q("tort","Mi a bioakkumuláció?","A környezetbe került szerves vagy szervetlen anyagok (pl. DDT, nehézfémek) felhalmozódása az élő szervezetekben; a táplálékláncon felfelé haladva a koncentráció tovább nő (biomagnifikáció)","A szennyezőanyagok lebomlása a talajban a mikroorganizmusok hatására","A víz tápanyagtartalmának (N, P) megnövekedése, ami elalgásodáshoz vezet","A légköri szennyezők kimosódása a csapadékkal","Bioakkumuláció: felhalmozódás az élőlényekben → a tápláléklánc mentén feldúsulás = biomagnifikáció (DDT, Hg, nehézfémek, cianidok).",1),
+Q("tort","Melyik elemhez kötődik a Minamata-kór?","Higany (Hg)","Ólom (Pb)","Kadmium (Cd)","Arzén (As)","Minamata-kór = higanymérgezés okozta neurológiai betegség (Japán, Minamata, 1956). Az épp a metil-higany halakban, kagylókban halmozódott fel.",1),
+Q("tort","Mi történt a vegyi üzemből a tengerbe jutó higannyal Minamatában?","Baktériumok metil-higannyá alakították, ami felhalmozódott a halakban és kagylókban, onnan az emberekbe jutott","A tengervíz kloridjai oldható komplexet képeztek vele, így nem jutott a táplálékláncba","Üledékben ásványosodott, ezért nem került az élőlényekbe","Elpárolgott a légkörbe, és onnan savas esővel jutott vissza","Az eredetileg szervetlen higanyt a baktériumok metil-higannyá alakították → bioakkumuláció → biomagnifikáció.",0),
+Q("tort","Melyik állítás igaz a Minamata-kórra?","Higanymérgezés okozta neurológiai betegség; terhes nők esetén a magzatnál veleszületett kórt is okozhat","Kadmium okozta csontlágyulással járó betegség","Perzisztens peszticidek okozta májelégtelenség","Ólomtartalmú festékek okozta fejlődési zavar","Tünetek: fejfájás, izomrángás, zsibbadás, hallás- és látásvesztés, mozgáskoordinációs zavar, bénulás, kóma; magzatnál fejlődési rendellenesség.",1),
+Q("tort","Melyik NEM igaz a DDT-re?","Gyorsan lebomló, rövid hatású szer, ezért nem halmozódik fel a környezetben","Széles spektrumú, perzisztens, erős növényvédő szer","Felhasználását elsőként Magyarországon tiltották be, 1968-ban","Az USA-ban 1972-re betiltották","A DDT PERZISZTENS (nehezen bomlik), ezért bioakkumulálódik. Magyarország tiltotta be elsőként (1968), USA: 1972.",1),
+Q("tort","Mikor és hol tiltották be elsőként a DDT használatát?","1968-ban Magyarországon","1972-ben az USA-ban","1962-ben az Egyesült Királyságban","1987-ben Japánban","Első betiltás: Magyarország, 1968. Az USA 1972-re követte (Carson hatására).",0),
+Q("tort","Ki írta a „Néma tavasz” című könyvet (1962)?","Rachel Carson (amerikai tengerbiológus, író)","Gro Harlem Brundtland","Denis Hayes","Frederic Vester","Carson a növényvédő szerek esztelen használatának hatásait mutatta be. Innentől számítjuk a globális zöldmozgalom kezdetét.",0),
+Q("tort","Mihez kötjük a globális zöldmozgalom kezdetét?","Rachel Carson: Néma tavasz (1962)","Az ENSZ megalakulása (1945)","A Kiotói jegyzőkönyv (1997)","A Montreali Egyezmény (1987)","1962: Néma tavasz → Kennedy vizsgálóbizottság → 1972-re DDT-tilalom az USA-ban.",0),
+Q("tort","Melyik volt az első zárt szennyvízcsatorna?","A Kr.e. 5. századi római Cloaca Maxima","A londoni csatornahálózat (XIV. század)","Karthágó csatornarendszere (Kr.e. 3. sz.)","A párizsi csatornák (XIX. sz.)","Cloaca Maxima, Róma: a szennyvizet és az esővizet a Tiberisbe vezette.",0),
+Q("tort","Mit tiltott meg I. Edward angol király 1306-ban Londonban?","A kőszén égetését (sikertelenül)","A folyókba történő szennyvízbevezetést","Az erdők kivágását a nemesek vadászterületein","A fémek olvasztását a városban","Londonban csak 1952-ben alakult ki a híres londoni (téli) szmog – smoke + fog = smog.",0),
+Q("tort","Melyik állítás igaz a K-stratégistákra?","Hosszú életűek, magas túlélési arányúak, kis populációnövekedési rátájúak; a populáció az eltartóképesség közelében stabilizálódik (pl. nagy testű emlősök)","Rövid életűek, gyors fejlődésűek, nagy szaporodási rátájúak","A populáció mérete gyakran túlnő az eltartóképességen","A hirtelen felszabaduló források gyors kihasználására specializálódtak","A K-stratégisták a stabil, S-alakú növekedést mutató fajok; az r-stratégisták a J-alakú, gyors szaporodásúak.",0),
+Q("tort","Melyik jellemző az r-stratégistákra?","Rövid életű, gyors fejlődésű, nagy növekedési rátájú; a hirtelen felszabaduló források gyors kihasználására alkalmas","Késői ivarérés, kis populációnövekedési ráta","Tartós gazdálkodás a forrásokkal","Stabil populációméret az eltartóképesség határán","r = gyors szaporodás (J-alakú görbe), K = eltartóképesség közelében stabilizálódás (S-alakú).",0),
+Q("tort","Mely szervezet megbízásából készült „A növekedés határai” (1972) című tanulmány (Meadows-modell)?","A Római Klub megbízásából az MIT-n","Az ENSZ Környezeti Programja (UNEP) megbízásából a Stockholmi Egyetemen","A Brundtland Bizottság megbízásából","A Greenpeace megbízásából","A modell szerint a korabeli tendenciák nem tarthatók fenn az emberiség létének veszélyeztetése nélkül.",0),
+Q("tort","Mit állított Frederic Vester (1982) az életben maradás programjában?","Az 1970-es évek átlagos amerikai fogyasztása mellett a Föld mindössze kb. 2 milliárd embert tudna eltartani","A Föld akár 20 milliárd embert is eltartana, ha a mezőgazdaság iparosodik","A népességrobbanás magától megáll 6 milliárd fő körül","Az olaj elfogyása 2000-re leállítja a gazdasági növekedést","Vester: a fogyasztási szint határozza meg az eltartóképességet.",0),
+Q("tort","Mi volt az 1970. április 22-i esemény?","Az első „Föld Napja” (Denis Hayes kezdeményezésére, 20 millió amerikai részvételével)","A Stockholmi Világkonferencia megnyitója","A Brundtland-jelentés kiadása","Az Agenda 21 elfogadása","Az USA-ban ezután törvények születtek a levegő és a vizek védelmére, új környezetvédő szervezetek alakultak.",0),
+Q("tort","Mi történt 1972-ben Stockholmban?","ENSZ 1. Környezetvédelmi Világkonferencia: létrehozták az UNEP-et, június 5. lett a Környezetvédelmi Világnap, elfogadták a Stockholmi Nyilatkozatot","Elfogadták az Agenda 21-et és megnyitották aláírásra az éghajlat-változási keretegyezményt","Aláírták a Kiotói jegyzőkönyvet","Megszületett a párizsi éghajlatváltozási egyezmény","Stockholm 1972: 113 ország, az emberhez méltó környezethez való jog nemzetközi elismerése.",0),
+Q("tort","Melyik dokumentum fogalmazta meg elsőként a fenntartható fejlődés fogalmát?","A Brundtland Bizottság „Közös Jövőnk” jelentése (1987)","A Stockholmi Nyilatkozat (1972)","A Kiotói jegyzőkönyv (1997)","A „Néma tavasz” (1962)","A Környezet és Fejlődés Világbizottságot (1984) Gro Harlem Brundtland (norvég miniszterelnök) vezette.",0),
+Q("tort","Melyik a fenntartható fejlődés helyes definíciója?","Olyan fejlődés, amely kielégíti a jelen szükségleteit anélkül, hogy lehetetlenné tenné a jövő generációk szükségleteinek kielégítését","Olyan gazdasági fejlődés, amely a környezetvédelmi költségeket a nullára csökkenti","Zéró gazdasági növekedés a természeti erőforrások megóvása érdekében","A fejlődés, amely a megújuló energiaforrásokra épül, és a nem megújulókat teljesen kizárja","Közös Jövőnk, 1987. A zéró növekedést a tanulmányok nem tartották elfogadhatónak.",1),
+Q("tort","Az alábbiak közül melyik NEM igaz a fenntartható fejlődésre?","A megújuló erőforrások felhasználása meghaladhatja a regenerálódási képességüket, ha ez a gazdasági növekedéshez szükséges","A megújuló erőforrások felhasználásának mértéke legfeljebb a regenerálódó képességükkel egyezhet meg","A hulladék keletkezésének mértéke legfeljebb a környezet befogadó/ártalmatlanító képességével egyezhet meg","A kimerülő erőforrások felhasználási ütemét a megújulókkal való helyettesíthetőség és a technológiai haladás határozza meg","Követelmények: megújulók ≤ regeneráció; kimerülők ésszerű üteme; hulladék ≤ befogadó képesség.",1),
+Q("tort","Mit szabályozott az 1987-es Montreali Egyezmény?","Az ózonréteget károsító vegyi anyagok (CFC-k) termelésének befagyasztását, majd csökkentését","Az üvegházhatású gázok kibocsátásának csökkentését","A veszélyes hulladékok országhatárokon átívelő szállítását","A DDT világszintű betiltását","Montreal 1987: az ózonréteg védelme (freonok).",0),
+Q("tort","Mit fogadtak el az 1992-es riói (Rio de Janeiro) konferencián?","Az Agenda 21 (Feladatok a XXI. századra) programot; aláírásra megnyitották a biodiverzitási és az éghajlatváltozási keretegyezményt","A Kiotói jegyzőkönyvet","A Párizsi Megállapodást","A Montreali Jegyzőkönyvet","Rio 1992: az ENSZ Környezet és Fejlődés Világkonferencia. 1993: ENSZ Fenntartható Fejlődés Bizottsága; GEF megerősítése.",0),
+Q("tort","Melyik volt az első jogilag is kötelező nemzetközi kibocsátáscsökkentési egyezmény az üvegházgázokra?","Kiotói jegyzőkönyv (1997)","Rioi keretegyezmény (1992)","Párizsi megállapodás (2015)","Kigali módosítás (2016)","Kiotó 1997. Párizs (2015) a 2020-as évtől érvényes, a Kigali megállapodás (2016) a HFC-kre vonatkozik.",0),
+Q("tort","Mi volt a 2012-es „Rio+20” konferencia eredménye?","Nem született jogilag kötelező megállapodás, a záródokumentum lényegében egy kívánságlista","Elfogadták a Kiotói jegyzőkönyvet","Jogilag kötelező globális CO₂-kvótákat írtak elő","Betiltották a HFC-ket","Rio+20 = az ENSZ 4. környezetvédelmi világkonferenciája.",0),
+Q("tort","Hány ország képviselte magát a 2015-ös Párizsi éghajlatváltozási egyezmény tárgyalásain, és mit vállalt az EU?","195 ország; az EU vállalta, hogy 2030-ig az 1990-es szinthez képest legalább 40%-kal csökkenti az üvegházgáz-kibocsátását","38 ország; az EU 8%-os csökkentést vállalt 2012-ig","193 ország; az EU 2000-ig stabilizálja a CO₂-kibocsátást","105 ország; az EU 30%-kal csökkenti a metánkibocsátást","Párizs: kibocsátás-mérséklés, alkalmazkodás és pénzügyi következmények (2020-tól).",0),
+Q("tort","Mi jellemezte a 2021-es glasgowi (COP26) klímakonferenciát?","A szénfelhasználás szakaszos csökkentése, ~100 ország metánvállalása (2030-ig −30%), 105 ország erdőirtás-visszaszorítási egyezménye","Jogilag kötelező globális CO₂-adó bevezetése","A szén teljes, azonnali betiltása (India támogatásával)","A Kiotói jegyzőkönyv meghosszabbítása 2030-ig","A „megszüntetés” szót India nem fogadta el, ezért lett „szakaszos csökkentés”.",0),
+Q("tort","Melyik sor tartozik az eutrofizáció folyamatához?","Megnő a víz N- és P-tartalma → elalgásodás → az algák elhalása, baktériumos lebontás → oldott oxigén csökken → halpusztulás, iszapképződés","A víz pH-ja a savas esők miatt 5,5 alá csökken, a halak kopoltyúja károsodik","A hőerőművek hűtővize felmelegíti a folyót, ezért az oldott oxigén nő","A nehézfémek feldúsulnak a halak szöveteiben","Eutrofizáció = tápanyag (foszfor, nitrogén) terhelés → algavirágzás → oxigénhiány.",1),
+Q("tort","Mik azok a mélytengeri halálzónák?","Tengeri területek, ahol az oldott oxigén koncentrációja 2 mg/L alá csökken (az eutrofizációhoz hasonló folyamat miatt); számuk 1990 óta megduplázódott (~150)","Tengeri területek, ahol a víz pH-ja 5 alá süllyed","A radioaktív hulladék tárolására kijelölt tengerszakaszok","Olyan területek, ahol a tengervíz hőmérséklete 40 °C fölé emelkedik","Algák túlszaporodása → pusztulás → lesüllyedés → lebomlás oxigént fogyaszt.",1),
+Q("tort","Melyik sor írja le helyesen a környezetvédelem és a természetvédelem közötti viszonyt?","Egymással egyenrangú, egymástól elválaszthatatlan, egymást kiegészítő, összehangolandó tevékenységek (Tardy János)","A természetvédelem a környezetvédelem alárendelt része","A környezetvédelem csak a természetes környezetet védi, a természetvédelem az épített környezetet is","A kettő egymással ellentétes célokat követ, ezért külön kell kezelni őket","A természetvédelem formái: passzív (megőrző) és aktív (gyarapító).",0),
+Q("tort","Mi a természetvédelem két fő formája?","Passzív (megőrző) és aktív (gyarapító)","Megelőző és utólagos","Helyi és globális","Jogi és műszaki","A természetvédelem a védett természeti értékek megóvására és lehetséges gyarapítására irányul.",0),
+Q("tort","Mi a környezetvédelem célja?","Az ember által okozott vagy okozandó kár minimalizálása a természetes és mesterséges környezet, végső soron az ember érdekében","A természetes állapot teljes visszaállítása az emberi tevékenység előtti szintre","A gazdasági növekedés leállítása","Kizárólag a védett természeti területek megóvása","A kár minimalizálása = a környezetszennyezés minimalizálása (technikák fejlesztése és alkalmazása, támogató jogi szabályozás).",0),
+Q("tort","Melyik NEM tartozik a műszaki fejlesztések környezetvédelmi szempontjai közé?","A hulladékokat minél nagyobb mértékben el kell égetni vagy lerakni, az újrahasznosítás mellőzhető","A természeti erőforrásokat a lehető legkisebb mértékben szabad igénybe venni","A technológiát úgy kell kialakítani, hogy minél kevesebb hulladék keletkezzen","A szennyezett levegőt és vizet tisztítani kell a természetbe való visszavezetés előtt","A hulladékokat minél nagyobb mértékben újra kell hasznosítani.",0),
+Q("tort","Melyik két tó szerepelt a kiszáradó tavak példájaként az előadáson?","Az Aral-tó (Kazahsztán, Üzbegisztán) és a Csád-tó","A Balaton és a Fertő-tó","A Bajkál-tó és a Tisza-tó","A Genfi-tó és a Garda-tó","Az Aral-tónál a kikötői infrastruktúra használhatatlanná vált, megszűnt a hajózás és az egykor évi 50 ezer tonnás halászat. Háttér: klímaváltozás, élelemhiány, gazdasági problémák.",0),
+Q("tort","Mekkora a Csendes-óceáni szemétsziget, és milyen a szemét jellege (2017-es adat)?","Kb. 2,5 millió km²; elsősorban apró, gyakran mikroszkopikus műanyagdarabok","Kb. 25 ezer km²; főleg nagy hulladéktömbök","Kb. 2,5 millió km²; főleg olajfolt","Kb. 250 km²; főleg fémhulladék","Nagyobb, mint Grönland; Magyarország 27-szer elférne rajta. 2050-re az óceáni szemét tömege meghaladhatja a halakét.",0),
+Q("tort","Mi okozta az emberiség népességrobbanását a XX. században?","Az orvostudomány és egészségügy fejlődése → átlagos élethossz növekedése; élelmiszer-ellátás javulása; meghosszabbodott szülőképes életkor","Az ipari forradalom előtti élelmiszer-túltermelés","A házasodási életkor csökkenése","A kivándorlás megszűnése","A XX. században 1,5 → 6 milliárd fő.",0),
+Q("tort","Mit tartalmazott az 1945-ben alapított ENSZ alapokmánya a környezetvédelemmel kapcsolatban?","Semmilyen környezetvédelmi célú rendelkezést","A légszennyezés korlátozásának elvét","A fenntartható fejlődés fogalmát","Az ózonréteg védelméről szóló kötelezettséget","A környezeti károkat eleinte a gazdag nemzetek gazdaságának mellékhatásaként könyvelték el.",0),
+Q("tort","Mit mond ki a Stockholmi Nyilatkozat (1972)?","Az emberhez méltó környezethez való jogot és a környezetvédelem alapelveit","A CFC-k kivezetését 1996-ig","A szén-dioxid-kvóták kereskedelmét","A HFC-k visszaszorítását","Nemzetközi szinten elismerte az emberhez méltó környezethez való jogot.",0),
+Q("tort","Melyik a „Linfen (Kína)” példája?","A világ legszennyezettebb városa; a kiteregetett ruha megszáradva feketedik","A világ legszennyezettebb folyója","A legnagyobb óceáni szemétsziget","A DDT-gyártás központja","Légszennyezés-példa (szén, ipar).",0)
+);
+
+/* ===== T2: alapdefiníciók, IPPC, BAT ===== */
+add(
+Q("alap","Mit jelent a környezetszennyezés?","Az emberi tevékenység eredményeként valamilyen anyag (vagy rezgés, hő, zaj) közvetlen vagy közvetett kibocsátása a levegőbe, talajba vagy vízbe, ami veszélyt jelenthet az emberi egészségre vagy a környezet minőségére","Bármilyen természetes eredetű anyag megjelenése a környezetben","Kizárólag a veszélyes hulladékok illegális lerakása","Csak a levegőbe kibocsátott szilárd részecskék jelenléte","A definícióban benne van a hő, a zaj és a rezgés is.",0),
+Q("alap","Melyik sor írja le helyesen az EMISSZIÓT?","Adott káros anyag kibocsátása a forrásból (pont-, épület- vagy felületi forrásból), mértékegysége pl. g/óra","A szennyező anyag terjedése, eloszlása, felhígulása a levegőben","A levegőben kialakult szennyezőanyag-koncentráció (levegőterheltségi szint), pl. µg/m³","A szennyező anyag kémiai átalakulása a légkörben","Emisszió = kibocsátás (forrás oldal).",1),
+Q("alap","Melyik sor írja le helyesen az IMMISSZIÓT?","A levegőterheltségi szint: a levegőben kialakult szennyezőanyag (gázok, aeroszolok) koncentrációja, mértékegysége pl. g/m³ vagy µg/m³","Adott káros anyag kibocsátása a forrásból, mértékegysége g/óra","A szennyező anyag terjedése és felhígulása","A kibocsátási határérték betartásának ellenőrzése","Immisszió = a levegő minőségét jellemző koncentráció (hatás oldal).",1),
+Q("alap","Melyik sor írja le helyesen a TRANSZMISSZIÓT?","Az adott szennyező anyag terjedése, eloszlása, felhígulása","A szennyező anyag kibocsátása a kéményből","A szennyező anyag koncentrációja a levegőben a befogadónál","A szennyező anyag leválasztása a füstgázból","Emisszió → transzmisszió → immisszió: kibocsátás → terjedés → levegőterheltség.",1),
+Q("alap","Melyik NEM pontforrás?","Burkolatlan szállítószalag (felületi forrás)","Kémény","Kivezető cső","Kivezető csatorna","Pontforrások: csövek, csatornák, kémények (kibocsátás egyértelműen meghatározható). Felületi forrás: pl. vörösiszap-tároló, burkolatlan szállítószalag. Épületforrás: természetes huzatú, fali szellőzők.",0),
+Q("alap","Mik az épületforrások?","Azok az épületek, amelyekből a légszennyezők természetes huzatú és fali szellőzőkön, nyílásokon keresztül jutnak ki","A szabadba telepített, pontforrással nem rendelkező berendezések","Kémények és kivezető csövek","A hulladéktárolók","Három forrástípus: pont-, épület-, felületi.",0),
+Q("alap","Mi a kibocsátási határérték?","Meghatározott paraméter(ek)ben kifejezett tömeg, koncentráció vagy kibocsátási szint, amely adott időszak alatt nem léphető túl","A környezetben megengedett legnagyobb koncentráció a lakott területen","Az egészségre káros szennyezőanyag-mennyiség a belélegzett levegőben","A technológia által elérhető minimális kibocsátás","Időbeli átlagolás: pillanatérték, napi, havi, éves átlag.",0),
+Q("alap","Mi a környezetszennyezés csökkentésének leghatékonyabb módja a felsoroltak közül?","A forrás megszüntetése (hulladékszegény/hulladékmentes technológia)","A „cső végi” kibocsátás elkülönítése és ártalmatlanítása","A környezetbe került szennyezők utólagos ártalmatlanítása","A határérték hígítással való betartása","Sorrend: forrás megszüntetése > emisszió szabályozása (cső végén) > immisszió utólagos kezelése. A hígítással való teljesítés határérték-túllépés!",0),
+Q("alap","Mi az életciklus-elemzés (LCA)?","Egy termék környezeti hatásrendszerének vizsgálata a nyersanyagbeszerzéstől a használaton át az újrahasznosításig vagy ártalmatlanításig","Egy termék gazdasági megtérülésének számítása","A gyártás során keletkező hulladék mennyiségének mérése","A termék biológiai lebomlási idejének meghatározása","Életút lépései: nyersanyag-kitermelés → gyártás → szállítás/terjesztés → használat → újrafelhasználás/újrahasznosítás → hulladékkezelés/ártalmatlanítás.",0),
+Q("alap","Mely elvekkel összhangban szabályozzák az ipari tevékenységek környezetszennyezését az EU-ban?","„Szennyező fizet” és „megelőzés”","„Aki használja, az fizet” és „utólagos kármentesítés”","„Fenntartható növekedés” és „kvótakereskedelem”","„Alkalmazkodás” és „kompenzáció”","IPPC: szennyezés a forrásnál hárítandó el; ésszerű erőforrás-gazdálkodás; gazdasági és helyi sajátosságok figyelembe vétele.",0),
+Q("alap","Mit jelent az IPPC?","Integrated Pollution Prevention and Control – integrált szennyezés-megelőzés és csökkentés","International Pollution Protection Convention","Industrial Pollution Permit Certificate","Integrated Product Pollution Cycle","Az integrált megközelítés levegő-víz-talaj kibocsátásait együtt kezeli (megelőzés, hulladékgazdálkodás, energiahatékonyság, balesetmegelőzés).",1),
+Q("alap","Melyik sorhoz kapcsolódik az IPPC kifejezés?","A levegő, víz és talaj kibocsátásait egységesen kezelő integrált megközelítés; ipari kibocsátási irányelv (2010/75/EU, IED)","A fotokémiai szmog kialakulásának mechanizmusa","A szennyvíztisztítás harmadik fokozata","A hulladékok szelektív gyűjtési rendszere","Az integrált szemlélet megakadályozza, hogy a szennyezés csak az egyik környezeti elemből a másikba kerüljön át.",1),
+Q("alap","Mi a legfontosabb oka az integrált szemléletnek az IPPC-ben?","A levegőbe, vízbe, talajba történő kibocsátások egymástól független csökkítése a szennyezést egyik környezeti elemből a másikba helyezheti át","A kibocsátások csak a vízre szabályozandók","A hulladékgazdálkodás nem környezetvédelmi kérdés","Az ipari tevékenységeket nem kell engedélyhez kötni","Ezért kell egységes, a környezet egészét védő megközelítés.",0),
+Q("alap","Minek a rövidítése a BAT?","Best Available Techniques – elérhető legjobb technika","Basic Air Treatment","Best Applied Technology","Biological Assessment Test","BAT-ot a referenciadokumentumok (BREF) rögzítik.",1),
+Q("alap","Mire vonatkozik a BAT kapcsán az, hogy „legjobb” technika?","A leghatékonyabb a környezet egészének védelmében","A legolcsóbb a gazdasági szempontból","A legnagyobb termelési kapacitást biztosító","A leggyorsabban beüzemelhető","Legjobb = leghatékonyabb a környezet egészének védelmében.",1),
+Q("alap","Mire utal a BAT-ban az „elérhető”?","A fejlesztési szint lehetővé teszi az alkalmazást elfogadható műszaki és gazdasági feltételek mellett; az üzemeltető számára ésszerű módon hozzáférhető","Csak a hazai gyártású technikák","Csak a laboratóriumban már kipróbált módszerek","Bármely technika, ha a gyártó vállalja a szállítást","Figyelembe veszi a költségeket és előnyöket.",0),
+Q("alap","Melyik sor NEM tartozik a BAT fogalmához?","Kifejezetten alacsony termelési kapacitást biztosító technika","Relatíve alacsony szennyezőanyag-kibocsátású technika","A gyakorlatban is alkalmazható technika","Gazdaságosan üzemeltethető technika","BAT = kipróbált, alkalmazható, gazdaságos, kis kibocsátású technika; a kis kapacitás nem kritérium.",1),
+Q("alap","Mi a „technika” a BAT értelmezésében?","Az a folyamat/módszer, amellyel a létesítményt tervezik, engedélyeztetik, építik, üzemeltetik, karbantartják és megszüntetik","Kizárólag a használt berendezés","Csak a kibocsátás-mérő eszközök összessége","Az üzem technológiai leírása","A technika tehát a teljes életút, nem csak a gép.",0),
+Q("alap","Mi a BREF?","A BAT-ra vonatkozó referenciadokumentum; az engedélyköteles létesítményeknek az abban megfogalmazott BAT-előírásoknak meg kell felelniük","Az éves kibocsátási jelentés formanyomtatványa","A környezetvédelmi hatóság ellenőrzési terve","A szennyvíztisztító telepek üzemeltetési naplója","BAT Reference Document: ez adja a határértékek megállapításának alapját.",0),
+Q("alap","Melyik rendelet szabályozza a környezeti hatásvizsgálatot és az egységes környezethasználati engedélyezési eljárást (EKHE)?","314/2005. (XII. 25.) Korm. rendelet","4/2011. (I. 14.) VM rendelet","2010/75/EU irányelv","96/61/EK irányelv","A 4/2011 VM rendelet a levegőterheltségi szint határértékeiről szól; a 2010/75/EU az IED (uniós).",0),
+Q("alap","Melyik NEM tartozik az EKHE-köteles tevékenységek főbb csoportjai közé?","Oktatási tevékenység (pl. egyetemi képzés)","Energiaipar","Hulladékkezelés","Nagy létszámú állattartás","EKHE-köteles pl.: energiaipar, fémek, építőanyag-ipar, vegyipar, hulladékkezelés, papíripar, textil, bőr, élelmiszeripar, állattartás, gépipar, bányászat…",0)
+);
+
+/* ===== T3: heterogén diszperz rendszerek ===== */
+add(
+Q("diszp","Hogyan definiálná a heterogén diszperz rendszert?","Több fázisból álló rendszer, amelyben az eltérő tulajdonságú anyagrészek között mikroszkóppal látható határfelületek vannak (az egyik rész összefüggő közeg: a diszperziós közeg)","Egyetlen fázisú, molekuláris szinten homogén oldat","Olyan elegy, amelyben a komponensek közös forráspontja azonos","Olyan rendszer, amelyben a részecskék mérete 0,1–1 nm","Heterogén = több fázis; a diszpergált részek a diszperziós közegben oszlanak el.",1),
+Q("diszp","Mely fázisok vannak jelen az EMULZIÓBAN?","Folyadék a folyadékban (két nem elegyedő folyadék)","Szilárd a folyadékban","Gáz a folyadékban","Szilárd a gázban","Emulzió: folyadék/folyadék.",1),
+Q("diszp","Mely fázisok vannak jelen a SZUSZPENZIÓBAN?","Szilárd részecskék folyadékban","Folyadékcseppek folyadékban","Gázbuborékok folyadékban","Folyadékcseppek gázban","Szuszpenzió (szol): szilárd/folyadék.",1),
+Q("diszp","Mely fázisok vannak jelen a KÖDBEN?","Folyadékcseppek gázban (aeroszol)","Szilárd részecskék gázban","Gázbuborékok folyadékban","Szilárd részecskék folyadékban","Köd: folyadék/gáz.",1),
+Q("diszp","Mely fázisok vannak jelen a FÜSTBEN?","Szilárd részecskék gázban (aeroszol)","Folyadékcseppek gázban","Folyadékcseppek folyadékban","Gázbuborékok folyadékban","Füst: szilárd/gáz.",1),
+Q("diszp","Mi a HAB?","Gázbuborékok (diszpergált gáz) folyadékban (lioszol)","Folyadékcseppek gázban","Szilárd részecskék folyadékban","Két nem elegyedő folyadék diszperziója","Hab: gáz/folyadék.",1),
+Q("diszp","Melyik párosítás HELYES? (diszpergált rész / közeg → név)","Folyadék / gáz → köd","Gáz / folyadék → emulzió","Szilárd / folyadék → hab","Szilárd / gáz → szuszpenzió","Gáz-folyadék: hab; folyadék-folyadék: emulzió; szilárd-folyadék: szuszpenzió; folyadék-gáz: köd; szilárd-gáz: füst.",0),
+Q("diszp","Melyik állítás igaz a durva diszperz rendszerekre (részecskeméret > 500 nm)?","Fénymikroszkóppal láthatók, önként ülepednek, papírszűrőn szűrhetők (pl. rostos üdítő)","Nem ülepednek, nem szűrhetők (pl. cukoroldat)","Csak elektronmikroszkóppal láthatók, nem ülepednek (pl. fehérjeoldat)","Mérete 1–0,1 nm, láthatatlanok","Durva: >500 nm; kolloid: 1–500 nm (fehérjeoldat); valódi oldat: 1–0,1 nm (cukoroldat).",0),
+Q("diszp","Melyik részecskeméret-tartomány jellemző a kolloid rendszerekre?","1–500 nm","Több mint 500 nm","0,1–1 nm","Több mint 1 mm","Kolloid: ultra- és elektronmikroszkóppal látható, nem ülepedik, papírszűrőn nem szűrhető.",0),
+Q("diszp","Mit jelent a ppm kifejezés?","Part per million – egy a millióhoz arány (pl. mg/L vagy mg/kg)","Part per milligram – egy a milligrammhoz","Pascal per meter","Percent per month","ppm = 10⁻⁶, ppb = part per billion = 10⁻⁹ (µg/L).",1),
+Q("diszp","Mit jelent a ppb kifejezés?","Part per billion – egy a milliárdhoz arány (pl. µg/L)","Part per billion – egy a billióhoz (10⁻¹²)","Percent per bar","Part per bottle","Magyar 'milliárd' = angol 'billion'. ppb ≈ µg/L, ppm ≈ mg/L.",1),
+Q("diszp","Melyek a diszperz rendszerek fontosabb hidrodinamikai paraméterei?","A rendszer koncentrációja, sűrűsége, viszkozitása, valamint a részecskék alakja, mérete és méreteloszlása","Színe, szaga és hőmérséklete","Gőznyomása, forráspontja és olvadáspontja","pH-ja és redoxpotenciálja","Koncentráció: g/m³, mg/m³, mg/L (ppm), µg/L (ppb). Sűrűség: kg/m³. Viszkozitás: a fluidum belső ellenállása a csúsztatófeszültséggel szemben.",0),
+Q("diszp","Mi a viszkozitás?","A fluidum belső ellenállásának mértéke a csúsztatófeszültséggel szemben","A fluidum sűrűségének és térfogatának hányadosa","A részecskék ülepedési sebessége","A fluidum felületi feszültsége","Dinamikai viszkozitás: Pa·s. A kinematikai viszkozitás a fluidumban keltett örvényszerű zavarok öncsillapodásának gyorsasága.",0),
+Q("diszp","A méreteloszlás szerint milyen diszperz rendszereket különböztetünk meg?","Monodiszperz, heterodiszperz és polidiszperz","Kolloid, szuszpenzió és emulzió","Folyékony, gáznemű és szilárd","Durva, finom és ultrafinom","Monodiszperz: azonos méretű részecskék.",0),
+Q("diszp","Mi az ülepítés lényege?","A diszpergált részek valamilyen erő hatására egy irányban elmozdulnak a közegben, a közegtől eltérő fizikai tulajdonságuk miatt","A fluidum áramoltatása porózus közegen nyomáskülönbség hatására","Buborékoltatással a részecskék felúsztatása","A komponensek elválasztása forráspont-különbség alapján","Gravitációs és centrifugális térben: sűrűségkülönbség; elektrosztatikus térben: töltéskülönbség.",0),
+Q("diszp","Mit ír le a Stokes-törvény?","Egy gömb alakú részecske ülepedési sebességét viszkózus közegben (a közegellenállás és a nehézségi erő egyensúlyakor kialakuló állandó sebességet)","Gázok oldhatóságát folyadékban a parciális nyomás függvényében","A felületi borítottságot az adszorpciós izotermában","A gázelegy gőz–folyadék egyensúlyát","v = d²·(ρ_részecske − ρ_közeg)·g / (18·η).",1),
+Q("diszp","Melyik a Stokes-törvény helyes alakja az ülepedési sebességre?","v = d²·(ρ_rész − ρ_közeg)·g / (18·η)","v = d·(ρ_rész − ρ_közeg)·g / (18·η²)","v = d²·(ρ_rész + ρ_közeg)·g / (18·η)","v = d²·η·g / (18·(ρ_rész − ρ_közeg))","d: részecske átmérő, ρ: sűrűségek, η: közeg dinamikai viszkozitása, g: nehézségi gyorsulás.",1),
+Q("diszp","Az alábbiak közül melyik paramétertől függ legerősebben a részecskék ülepedési sebessége gravitációs erőtérben?","A részecske átmérőjétől (négyzetesen)","A közeg hőmérsékletétől (négyzetesen)","A részecske színétől","A tartály alakjától","A sebesség d²-tel arányos: az átmérő megduplázása négyszeres sebességet jelent.",1),
+Q("diszp","Hogyan változik az ülepedési sebesség, ha a részecske átmérője a kétszeresére nő (minden más állandó, Stokes)?","Négyszeresére nő","Kétszeresére nő","Felére csökken","Nem változik","v ~ d² → 2² = 4.",0),
+Q("diszp","Hogyan változik az ülepedési sebesség, ha a közeg dinamikai viszkozitása a kétszeresére nő (Stokes)?","Felére csökken","Kétszeresére nő","Négyszeresére csökken","Nem változik","v ~ 1/η.",0),
+Q("diszp","Milyen változtatás kell a Stokes-egyenletbe centrifugális ülepítésnél?","A g nehézségi gyorsulás helyett r·ω² centrifugális gyorsulást kell írni","A viszkozitás helyett a kinematikai viszkozitást kell írni","A részecske átmérő helyett a sugarat kell írni","A sűrűségkülönbség helyett az összegüket kell venni","ω = 2·π·n szögsebesség, r a centrifuga sugara. A centrifugálás akár ezerszer gyorsabb lehet.",1),
+Q("diszp","Az alábbiak közül melyik paraméter(ek)től függ leginkább az ülepedés sebessége centrifugális erőtérben?","Fordulatszám, centrifuga sugara, részecskeátmérő, sűrűségkülönbség, viszkozitás","Csak a közeg hőmérséklete","A centrifuga anyaga","A betáplálás időpontja","A centrifugális gyorsulás r·ω², ω = 2πn.",1),
+Q("diszp","Melyik NEM valós ülepítő berendezés?","Budapesti-típusú ülepítő medence","Lipcsei-típusú medence","Dorr-ülepítő","Dortmundi típusú ülepítő","Valós: porülepítő kamra, Lipcsei-típusú medence, Dorr, Dortmundi típusú.",1),
+Q("diszp","Melyik ülepítő medencetípusok szerepeltek az előadáson?","Lipcsei-típusú, Dorr, Dortmundi","Berlini, Bécsi, Prágai","Párizsi, Londoni, Madridi","Csak a Dorr","Plusz: porülepítő kamra gázokhoz.",0),
+Q("diszp","Milyen centrifugatípusok szerepeltek az előadáson?","Szakaszos üzemű dobcentrifuga, szuper centrifuga, csigás (víztelenítő) centrifuga","Csak a szuper centrifuga","Ciklon és multiciklon","Fluidizációs és habreaktor","A ciklon nem centrifuga: ott a dob mozdulatlan.",0),
+Q("diszp","Melyik sor NEM igaz a ciklonokra?","Forgó alkatrészeket tartalmaznak és lamináris ülepedés zajlik bennük, ezért nagy az elválasztás élessége","Nincs forgó alkatrészük","A mozdulatlan készülékben a fluidum körpályára kényszerül","A turbulens áramlás zavarja az ülepedést, ezért az elválasztás élessége kisebb, mint a centrifugáé","A ciklon: álló dob, turbulens áramlás → kisebb élesség; a centrifugában forog a dob és lamináris az ülepedés.",1),
+Q("diszp","Mi a ciklonok működési elve?","A mozdulatlan készülékbe érintőlegesen bevezetett fluidum körpályára kényszerül, a centrifugális erő a részecskéket a falhoz sodorja, ott leválnak","A dob nagy fordulatszámú forgatása a folyadékkal együtt","A részecskék felúsztatása légbuborékokkal","A gáz áthaladása szövetszűrőn","Előnye: nincs forgó alkatrész. Hátránya: turbulencia → kisebb élesség.",1),
+Q("diszp","Mi történik a ciklonban a térfogatáram növelésekor?","A határszemcse átmérője csökken, a leválasztás hatásfoka nő","A határszemcse átmérője nő, a hatásfok csökken","Nem változik semmi","A ciklon eldugul","A határszemcse a ciklonban még éppen leválasztható legkisebb részecske. (A nyomásesés ugyanakkor nő!)",0),
+Q("diszp","Milyen két fő szűrési típust különböztetünk meg?","Mélységi szűrés és felületi szűrés","Gravitációs és centrifugális szűrés","Mechanikus és pneumatikus szűrés","Szakaszos és szakaszmentes szűrés","A szűrésnél a közeg porózus közegen halad át nyomáskülönbség hatására; koncentrátum (iszap) és szűrlet (permeátum) keletkezik.",1),
+Q("diszp","Melyik sorban van két valós szűrési típus?","Mélységi és felületi szűrés","Abszorpciós és adszorpciós szűrés","Flotációs és extrakciós szűrés","Mágneses és elektrosztatikus szűrés","Utóbbiak szilárd-szilárd rendszerek elválasztási módjai, nem szűrési típusok.",1),
+Q("diszp","Mi a szűrlet másik neve membránszűrésnél?","Permeátum","Koncentrátum","Raffinátum","Extraktum","Koncentrátum (iszap) marad vissza; a szűrlet = permeátum.",0),
+Q("diszp","Mi az a flotálás?","A derítés speciális módja: buborékoltatással a részecskékhez levegőbuborékokat kötnek, így sűrűségük csökken és felúsznak a folyadék felszínére, ahonnan lefölözhetők","Gázkomponens oldása folyadékban","Oldott anyag megkötése szilárd felületen","Folyadékelegy részleges elpárologtatása","Flotálás: felúsztatás légbuborékokkal és lefölözés.",1),
+Q("diszp","Melyik sor vonatkozik a flotálásra?","Légbuborékok megkötése a diszpergált részecskéken, felúsztatás, lefölözés","Az oldott komponens átvitele a folyadékból egy másik, nem elegyedő folyadékba","Komponensek megkötése porózus szilárd anyag felületén","Az illékonyabb komponens feldúsulása a gőzfázisban","Hasonlítsd össze: extrakció, adszorpció, desztilláció.",1),
+Q("diszp","Melyik művelet szilárd-szilárd rendszerek elválasztására szolgál méretkülönbség alapján?","Szitálás, rostálás","Flotálás","Extrakció","Membránszűrés","A szita/rosta a szemcsehalmaz mérete alapján választ szét (síkszita, dobszita, Rotex szita).",0),
+Q("diszp","Mire alkalmasak a mágneses elválasztási műveletek?","Fémszennyezések eltávolítására, szelektív hulladékkezelésre, vasércek dúsítására","Műanyagok szelektív szétválasztására","Gázok tisztítására oldószerrel","Oldott sók eltávolítására","A diamágneses anyagokat taszítja, a paramágneseket vonzza a tér; a ferromágneseket kifejezetten erősen vonzza.",0),
+Q("diszp","Mire használják elsősorban az elektrosztatikus elválasztást (szilárd-szilárd rendszerekben)?","Műanyaghulladékok szelektív elkülönítésére","Vasércek dúsítására","Szennyvíz derítésére","Finom iszap víztelenítésére","Töltésszerzés: érintkeztetés, vezetékes indukció, ionbombázás.",0),
+Q("diszp","Hogyan tölthetők fel a szemcsék az elektrosztatikus elválasztáshoz?","Érintkeztetéssel, vezetékes indukcióval és ionbombázással","Hevítéssel, hűtéssel és nyomásváltoztatással","Mágneses térben, tűzben és vízben","Csak koronakisüléssel","A töltés előjelétől függően az egyik elektród vonzza, a másik taszítja a szemcséket.",0),
+Q("diszp","Mi a különbség az emisszió-szabályozás „cső végi” és „forrás megszüntetése” megközelítése között?","Cső végén a már képződött szennyezőt választjuk le/ártalmatlanítjuk, forrás megszüntetésénél nem is képződik (hulladékmentes technológia)","A cső végi módszer a forrásnál, a másik a kibocsátás után avatkozik be","A kettő ugyanaz","A cső végi mindig olcsóbb és jobb","A források felszámolása a preferált (megelőzés).",0)
+);
+
+/* ===== T4: homogén szennyeződések elválasztása ===== */
+add(
+Q("hom","Mely sor vonatkozik az abszorpcióra?","Gáz vagy gázelegy komponensének oldása folyadékfázisban (gáz–folyadék érintkeztetés)","Folyadék megkötése szilárd felületen","Adott komponens átvitele az egyik folyadékfázisból a másikba","Oldott folyadékkomponensek átoldása a gázfázisba","Abszorpció: gáz → folyadék; ellentéte a deszorpció.",1),
+Q("diszp","Melyik NEM tartozik a homogén szennyeződések elválasztására alkalmas műveletek közé?","Ülepítés gravitációs erőtérben","Desztilláció","Adszorpció","Extrakció","Homogén: desztilláció, abszorpció, adszorpció, ioncsere, extrakció, membránszűrés. Az ülepítés heterogén rendszerekre való.",0),
+Q("hom","Mi írja le a gázok folyadékban való oldódását egyensúlyban?","Henry-törvény: c = H·p (az oldott gáz koncentrációja arányos a gáz parciális nyomásával)","Stokes-törvény","Lambert–Beer-törvény","Langmuir-izoterma","c_A = H·p_A. H a Henry-állandó.",0),
+Q("hom","Milyen paraméterektől függ egy gáz folyadékba történő beoldódásának mértéke?","A gáz parciális nyomásától és a Henry-állandótól (gáz–folyadék minőség, hőmérséklet)","Csak a folyadék színétől","Kizárólag a tartály méretétől","A gáz moláris tömegétől függetlenül mindig ugyanannyi oldódik","Henry: c = H·p. A H állandó függ a gáz-folyadék párostól és a hőmérséklettől.",1),
+Q("hom","Mi az abszorpció ellentétes folyamata?","Deszorpció","Adszorpció","Extrakció","Kondenzáció","Deszorpció: az oldott komponens visszaadása a gázfázisnak.",0),
+Q("hom","Milyen abszorber-kialakítások szerepeltek?","Tányéros és töltetes abszorber","Csak fluidágyas","Csak csőkemence","Ciklon és multiciklon","Töltetes: nagy porozitású töltelékelemek az érintkezési felület növelésére; tányéros: perforált tálcák, túlfolyók.",0),
+Q("hom","Mi a desztilláció alapja?","Folyadékelegy párologtatásakor mindkét komponens megjelenik a gázfázisban is, de nem egyenlő arányban: az illékonyabb komponens feldúsul a gőzben","A komponensek eltérő oldhatósága nem elegyedő folyadékokban","A komponensek eltérő adszorbeálhatósága szilárd felületen","A komponensek méretkülönbsége","Forráspont-diagram: forrponti és harmatponti görbe.",1),
+Q("hom","Mit nevezünk rektifikálásnak?","A desztilláció több lépésben ismételt végrehajtását: az elpárologtatott elegyet kondenzáljuk, majd újra elpárologtatjuk, cél a teljesen tiszta komponens","Gáz folyadékban oldása nagy nyomáson","Két folyadék szétválasztása extrahálószerrel","Szennyezők megkötése aktív szénen","A kondenzátum összetétele az előző gőzének felel meg.",1),
+Q("hom","Melyik sor vonatkozik a desztillációra?","Az illékonyabb komponens feldúsul a gőzfázisban, ismétléssel (rektifikálás) tiszta komponens állítható elő","A komponens átoldása nem elegyedő oldószerbe","A gáz megkötése nagy fajlagos felületű szilárd anyagon","A buborékokhoz tapadt részecskék felúsztatása","Az extrakcióhoz oldószer kell, az adszorpcióhoz adszorbens.",1),
+Q("hom","Mit jelent az extrakció?","Oldat komponenseinek szétválasztása az oldattal nem elegyedő folyadékkal való érintkeztetéssel (a komponens az oldószerben jobban oldódik)","Gázok oldása folyadékban","Szilárd anyag megkötése porózus felületen","Folyadékok szétválasztása forráspont szerint","Anyaoldat + oldószer → extraktum (kivonandó anyag az oldószerben) + raffinátum (maradék).",1),
+Q("hom","Mi az extrakció során a raffinátum?","A maradék anyaoldat, amelyből a komponenst kivontuk","Az oldószer, amellyel extrahálunk","A kivonandó, értékes anyag az oldószerben","A felhasznált töltet","Extraktum = oldószer + kivont anyag; raffinátum = maradék.",0),
+Q("hom","Mi az extraktum?","Az oldószer a belőle kivont (értékes) anyaggal","A kivonás után visszamaradó anyaoldat","A használt töltetes oszlop","A deszorpció terméke","Oldószer + kivonandó anyag → extraktum.",0),
+Q("hom","Melyik sor vonatkozik az extrakcióra?","Szerves és fémkomplexes szennyezések esetén alkalmazható, ha a koncentráció nem túl alacsony; kis koncentrációknál inkább előtisztításként jó","Kis gázkoncentrációknál is nagy aktivitás szilárd felületen","Az illékonyabb komponens feldúsulása gőzben","Légbuborékos felúsztatás","Kivitelezés: töltetes vagy tányéros oszlop. Alacsony koncentrációnál nem versenyképes az adszorpcióval.",1),
+Q("hom","Mi az adszorpció definíciója?","Gázok, gőzök vagy oldatok komponenseinek megkötése nagy fajlagos felületű porózus szilárd anyagokon (pl. aktív szénen, szilikagélen)","Gáz oldódása folyadékban","Az illékonyabb komponens elpárologtatása","Folyadékkomponens átvitele másik folyadékba","Adszorpció = felületi megkötés; abszorpció = oldódás a fázis belsejében.",1),
+Q("hom","Melyik sor vonatkozik az ADSZORPCIÓRA?","Gőz, gáz vagy folyadék megkötődése szilárd felületen","Gáz oldódása folyadékban","Egyik folyadékfázisból a másikba történő átvitel","Folyadékkeverék elválasztása forráspont alapján","Adsorption vs. absorption!",1),
+Q("hom","Melyik NEM tartozik a jó adszorbensek tulajdonságai közé?","Aktivitása és szilárdsága jelentősen romlik a többszöri regenerálás során","Kis gázkoncentrációnál is megfelelő aktivitású","Könnyen megvalósítható a deszorpció","Vegyileg ellenálló a folyamatban résztvevő anyagokkal szemben","A jó adszorbens: nagy fajlagos felület, kis koncentrációnál is aktív, könnyű deszorpció, regenerálás után is megmarad az aktivitás/szilárdság.",1),
+Q("hom","Mely anyagok az ipari adszorbensek?","Aktív szén, aktív Al₂O₃, szilikagél, molekulaszita","Mészkő, gipsz, homok, kavics","Higany, ólom, kadmium","Fluidizált homok, bauxit, cement","Fajlagos felület: aktív szén 500–1500 m²/g (legnagyobb), Al₂O₃ 300–350, szilikagél 250–850, molekulaszita 500–1000.",0),
+Q("hom","Melyik adszorbens fajlagos felülete a legnagyobb (500–1500 m²/g)?","Aktív szén","Aktív Al₂O₃","Szilikagél","Molekulaszita","Aktív szén 500–1500; molekulaszita 500–1000; szilikagél 250–850; Al₂O₃ 300–350 m²/g.",0),
+Q("hom","Mi írja le az adszorpciót állandó hőmérsékleten a felületi borítottság és a nyomás között?","Az adszorpciós izotermák (Langmuir, Freundlich, BET)","A Stokes-egyenlet","A Henry-törvény","A Raoult-törvény","Relatív felületi borítottság = elfoglalt helyek / összes hely.",0),
+Q("hom","Melyik izoterma írja le a monomolekuláris réteg kialakulását?","Langmuir-izoterma","BET-izoterma","Freundlich-izoterma","Henry-izoterma","BET (Brunauer–Emmett–Teller): több réteg alakulhat ki az adszorbeált anyagból.",0),
+Q("hom","Milyen kialakításúak lehetnek az adszorberek?","Állóágyas vagy mozgóágyas","Csak fluidágyas","Csak gőzfejlesztő típusú","Csak sugárkeveréses","Szakaszos (több nyugvó ágyas egység) vagy folyamatos (fluidágyas).",0),
+Q("hom","Mi a reagáltatási műveletek célja a környezetvédelemben?","A káros komponens átalakítása a környezetre nézve ártalmatlan anyaggá, minél teljesebb konverzióval","A szennyezők elpárologtatása és kibocsátása a légkörbe","A szennyezők hígítása","A szennyezők szétválasztása méret szerint","A tervezéshez ismerni kell a reakciók sztöchiometriai, termodinamikai és kinetikai jellemzőit.",0),
+Q("hom","Termikus működés alapján milyen reaktorok vannak?","Izoterm és adiabatikus reaktorok","Gáz és folyadék reaktorok","Nagy és kis nyomású reaktorok","Szakaszos és folyamatos reaktorok","Izoterm: fűtés/hűtés tartja állandón a hőmérsékletet; adiabatikus: nincs hőátadás a folyamat alatt.",0),
+Q("hom","Mi az adiabatikus reaktor jellemzője?","Előmelegítés/előhűtés után a reakció lejátszódik, de a folyamat közben nincs hőátadás/hőelvezetés","Hűtéssel akadályozzák a túlmelegedést","Mindig szakaszos üzemű","Csak endoterm reakciókhoz használják","Izoterm reaktor: exoterm/endoterm folyamat hűtéssel vagy fűtéssel.",0)
+);
+/* Kérdésbank 2/2: előadás 3 (T5-T10) */
+
+/* ===== T5: légkör szerkezete, levegő összetétele ===== */
+add(
+Q("legkor","Melyik a légkör rétegeinek helyes sorrendje alulról felfelé?","Troposzféra – sztratoszféra – mezoszféra – termoszféra – exoszféra","Sztratoszféra – troposzféra – mezoszféra – exoszféra – termoszféra","Troposzféra – mezoszféra – sztratoszféra – termoszféra – exoszféra","Exoszféra – termoszféra – mezoszféra – sztratoszféra – troposzféra","Tro-Szt-Mez-Ter-Exo.",0),
+Q("legkor","Melyik jellemző a troposzférára?","A légkör tömegének ~80%-át tartalmazza, itt zajlik az időjárás; a hőmérséklet felfelé csökken (kb. 0,6 °C/100 m); a tetején a tropopauza (7–17 km)","A hőmérséklet felfelé emelkedik, stabil rétegződés, itt van az ózonréteg","A meteorok nagy része itt ég el","A légkör legritkább külső burka, ahonnan H és He szökik","A tropopauza az egyenlítő mentén a legmagasabban, a sarkokon és télen a legalacsonyabban van; hőmérséklete kb. –55 °C.",0),
+Q("legkor","Melyik rétegben van az ózonréteg, és milyen a hőmérséklet-változás felfelé?","Sztratoszféra; a hőmérséklet felfelé emelkedik, a rétegződés stabil","Troposzféra; a hőmérséklet felfelé csökken","Mezoszféra; a hőmérséklet felfelé emelkedik","Termoszféra; a hőmérséklet állandó","A sztratoszféra kb. 50 km-ig tart; a szennyezők sokáig ott maradnak, az egész Föld éghajlatát befolyásolhatják.",0),
+Q("legkor","Melyik réteg a légkör legkevésbé ismert rétege, ahol a meteorok nagy része elég?","Mezoszféra (~50–90 km)","Sztratoszféra","Termoszféra","Troposzféra","A meteorológiai léggömbök már nem jutnak fel, az időjárási műholdak magasabban keringenek.",0),
+Q("legkor","Hol kering a nemzetközi űrállomás (ISS)?","A termoszférában","A mezoszférában","A sztratoszférában","Az exoszférában","Termoszféra: ~90 km-től, 500–2000 °C „hőmérséklet” (a levegő annyira ritka, hogy a hőmérséklet hagyományos értelmezése félrevezető).",0),
+Q("legkor","Mi a homoszféra?","A troposzféra, sztratoszféra és mezoszféra: állandó összetételű légburok (~110 km-ig)","A termoszféra és exoszféra","Csak a troposzféra","A tropopauza és a sztratopauza közötti réteg","Felette a heteroszféra: a gázok molekulatömeg szerint rétegződnek (atomos O, majd He, végül H).",0),
+Q("legkor","Melyik a helyes sorrend a levegő összetételének vonatkozásában (száraz levegő, térfogat%)?","N₂ (78%) > O₂ (21%) > Ar (0,9%) > CO₂ (0,04%)","O₂ > N₂ > Ar > CO₂","N₂ > O₂ > CO₂ > Ar","N₂ > Ar > O₂ > CO₂","78 – 21 – 0,9 – 0,04 v/v%.",1),
+Q("legkor","Mekkora a CO₂ koncentrációja a levegőben (kb., ppm)?","Kb. 420 ppm (0,04 v/v%)","Kb. 42 ppm","Kb. 4200 ppm","Kb. 42 000 ppm","419,7 ppm (2023), ~ 424 ppm (2025). Mauna Loa mérések.",0),
+Q("legkor","Mit jelent a ppm egy gáz koncentrációjára (levegőben)?","mL/m³ (vagy g/t)","µg/m³","mg/L","g/cm³","ppm: 1 mL gáz 1 m³ levegőben.",0),
+Q("legkor","Melyik NEM sorolható a levegő természetes szennyezőanyagainak csoportjába?","Gépjármű-kipufogógáz","Vulkáni tevékenységből származó SO₂, H₂S, HCl","Por, homok, pollenek","Villámlásból keletkező nitrogén-oxidok","Természetes: por, homok, vulkáni gázok, erdőtüzek, villámlás (NOx), állatok-növények bomlása (NH₃), pollenek. A gépjármű antropogén.",1),
+Q("legkor","Melyik természetes jelenség növeli a levegő NOx-tartalmát?","Villámlás","Pollenszórás","Szél","Talajerózió","Villámlás (és nitrifikáló baktériumok, vulkáni tevékenység).",0),
+Q("legkor","Mekkora a vízgőz legnagyobb jellemző koncentrációja a levegőben?","Akár 4 v/v%","Legfeljebb 0,04 v/v%","Akár 40 v/v%","Mindig 21 v/v%","A száraz levegő összetétele a vízgőzt nem tartalmazza.",0)
+);
+
+/* ===== T6: szennyező anyagok csoportjai, szmog, szabályozás, savas esők ===== */
+add(
+Q("szmog","Melyik csoportba tartozik a CO₂, a CO és a PAH?","C tartalmú vegyületek","S tartalmú vegyületek","N tartalmú vegyületek","Halogén tartalmú szerves vegyületek","S: SO₂; N: NOx; C: CO₂, CO, CxHy, PAH; VOC; halogénezett szerves: PCB; por: PM₁₀, PM₂,₅.",0),
+Q("szmog","Melyik körülmény vonatkozik a fotokémiai (Los Angeles-i típusú) szmogra?","Magas hőmérséklet, intenzív napfény (UV), alacsony páratartalom; NOx, CO, CxHy → ózon, oxidáló gyökök, peroxidok (PAN)","Alacsony hőmérséklet, magas páratartalom, por és korom; SO₂ → kénessav, kénsav","Alacsony hőmérséklet, száraz levegő, erős szél","Éjszakai, hideg, párás idő; fő összetevő a CO₂","A fotokémiai szmog „nyári”, oxidáló jellegű.",1),
+Q("szmog","Melyik körülmény vonatkozik a londoni típusú (téli) szmogra?","Alacsony hőmérséklet, magas páratartalom, por és korom; a pára kondenzálódása, az SO₂ elnyelődése a cseppekben → H₂SO₃, H₂SO₄","Magas hőmérséklet, napfény (UV), alacsony páratartalom; ózon, PAN","Magas hőmérséklet, száraz levegő, főleg NOx","Napfény hatására végbemenő fotokémiai reakciók","Londoni szmog = redukáló jellegű, SO₂ alapú.",1),
+Q("szmog","Mikor alakult ki az első híres londoni típusú szmog?","1952-ben","1906-ban","1987-ben","2015-ben","A smoke + fog = smog. (Már 1306-ban próbálták tiltani a kőszén égetését.)",0),
+Q("szmog","Mi a fotokémiai szmog legkártékonyabb komponense?","Troposzférikus ózon (és más oxidánsok: PAN, peroxidok)","Kén-dioxid","Szén-dioxid","Vízgőz","NOx + CO + szénhidrogének + napfény → ózon.",0),
+Q("szmog","Hány veszélyességi fokozata van a légszennyező anyagoknak, és melyik a legsúlyosabb?","4; I. különösen veszélyes","3; A. különösen veszélyes","5; V. különösen veszélyes","4; IV. különösen veszélyes","I. különösen veszélyes, II. fokozottan veszélyes, III. veszélyes, IV. mérsékelten veszélyes.",0),
+Q("szmog","Mely veszélyességi fokozatba tartozik a CO?","II. fokozottan veszélyes","I. különösen veszélyes","III. veszélyes","IV. mérsékelten veszélyes","CO: II.; SO₂: III.; PM₁₀: III.",0),
+Q("szmog","Mely veszélyességi fokozatba tartozik a kén-dioxid?","III. veszélyes","I. különösen veszélyes","II. fokozottan veszélyes","IV. mérsékelten veszélyes","SO₂: III. veszélyes. Bioindikátora: a zuzmók.",0),
+Q("szmog","Melyik rendelet szabályozza a levegőterheltségi szint határértékeit és a helyhez kötött pontforrások kibocsátási határértékeit?","4/2011. (I. 14.) VM rendelet","314/2005. Korm. rendelet","2010/75/EU irányelv","96/61/EK irányelv","A 314/2005 az EKHE-ről szól.",0),
+Q("szmog","Melyik mellékletben találhatók a 4/2011 VM rendeletben az egészségügyi határértékek?","1. melléklet","3. melléklet","6. melléklet","7. melléklet","1.: egészségügyi határértékek; 3.: tájékoztatási és riasztási küszöbértékek; 6.: általános technológiai kibocsátási határértékek; 7.: eljárás-specifikus határértékek.",0),
+Q("szmog","Mit tartalmaz a 4/2011 VM rendelet 3. melléklete?","A tájékoztatási és riasztási küszöbértékeket","Az egészségügyi határértékeket","Az általános technológiai kibocsátási határértékeket","Az eljárás-specifikus kibocsátási határértékeket","Lásd a melléklet-számok a 'Puska' fülön.",0),
+Q("szmog","Mi minősül határérték-túllépésnek?","Ha a légszennyező a füstgáz hígításával éri el a technológiai kibocsátási határérték betartását","Ha a határértéket egyszer elérik, de nem lépik túl","Ha a hordozógázt indokoltan hűtik","Ha a határérték betartásához szűrőt használnak","A hordozógáz indokolt hígítására/hűtésére használt levegőt a koncentráció meghatározásánál figyelmen kívül kell hagyni.",0),
+Q("szmog","Mi a SO₂ óra szerinti egészségügyi határértéke?","250 µg/m³ (1 órás); 125 µg/m³ (24 órás); 50 µg/m³ (éves)","100 µg/m³ (1 órás); 85 (24 órás); 40 (éves)","10 000 µg/m³ (1 órás); 5 000 (24 órás); 3 000 (éves)","50 µg/m³ (24 órás); 40 (éves)","SO₂ 250 / 125 / 50.",0),
+Q("szmog","Mi a NO₂ egészségügyi határértéke?","100 µg/m³ (1 órás); 85 µg/m³ (24 órás); 40 µg/m³ (éves)","250 / 125 / 50 µg/m³","10 000 / 5 000 / 3 000 µg/m³","200 / 100 / 40 µg/m³","NO₂ 100 / 85 / 40.",0),
+Q("szmog","Mi a CO egészségügyi határértéke?","10 000 µg/m³ (1 órás); 5 000 µg/m³ (24 órás, napi 8 órás mozgó átlagok maximuma); 3 000 µg/m³ (éves)","250 / 125 / 50 µg/m³","100 / 85 / 40 µg/m³","1 000 / 500 / 300 µg/m³","CO 10 000 / 5 000 / 3 000.",0),
+Q("szmog","Mi a PM₁₀ egészségügyi határértéke (nem toxikus por)?","24 órás: 50 µg/m³; éves: 40 µg/m³; 1 órás nincs értelmezve","1 órás: 50; 24 órás: 40; éves: 30","24 órás: 125; éves: 50","24 órás: 25; éves: 10","A PM₂,₅-nek csak éves határértéke van: max. 18 µg/m³.",0),
+Q("szmog","Mi a PM₂,₅ egészségügyi határértéke az előadás szerint?","Csak éves határértéke van: max. 18 µg/m³","1 órás: 18 µg/m³","24 órás: 50 µg/m³","Nincs határértéke","A PM₁₀-nek nincs 1 órás határértéke.",0),
+Q("szmog","Mekkora az ózon egészségügyi határértéke (napi 8 órás mozgó átlagok maximuma)?","120 µg/m³","50 µg/m³","10 µg/m³","1000 µg/m³","Egyéb: benzol 24 h: 10, éves: 5; ólom 24 h: 0,3; higany 24 h: 1 µg/m³.",0),
+Q("szmog","Mi a különbség a tájékoztatási és a riasztási küszöbérték között?","Tájékoztatási: a lakosságot tájékoztatni kell (tájékoztatási fokozatú szmog); riasztási: már rövid túllépése is veszélyeztetheti az egészséget → szmogriadó terv, forgalomkorlátozás","Tájékoztatási: forgalomkorlátozás; riasztási: csak lakossági tájékoztatás","Mindkettő ugyanazt jelenti, csak az átlagolási idő különbözik","Tájékoztatási: vállalatokat bírságolnak; riasztási: tilos a fűtés","Riasztási küszöb értéke mindig magasabb.",0),
+Q("szmog","Mi a SO₂ tájékoztatási és riasztási küszöbértéke (1 órás átlag, 3 egymást követő órában)?","Tájékoztatási: 400 µg/m³; riasztási: 500 µg/m³","Tájékoztatási: 250; riasztási: 125","Tájékoztatási: 100; riasztási: 85","Tájékoztatási: 350; riasztási: 400","NO₂: 350/400; CO: 20 000/30 000; ózon: 180/240; PM₁₀ (24 h): 75/100.",0),
+Q("szmog","Melyik pár a NO₂ tájékoztatási/riasztási küszöbértéke?","350 / 400 µg/m³","400 / 500 µg/m³","20 000 / 30 000 µg/m³","180 / 240 µg/m³","NO₂ 350 / 400.",0),
+Q("szmog","Melyik pár az ózon tájékoztatási/riasztási küszöbértéke?","180 / 240 µg/m³","350 / 400 µg/m³","75 / 100 µg/m³","400 / 500 µg/m³","Ózon: 180 / 240.",0),
+Q("szmog","Hogyan keletkeznek a savas esők?","A NOx a páracseppekben salétromsavat, az SO₂ kénessavat és kénsavat képez; ezek savas eső formájában jutnak a felszínre","A CO₂ nagy mennyiségű elnyelődése miatt keletkező szénsav önmagában okozza","Az ózon és a freonok reakciója a felhőkben","Az ammónia lúgos jellege miatt savas kémhatású csapadék képződik","A savas eső fő okozói: SO₂ és NOx.",0),
+Q("szmog","Az alábbiak közül melyik NEM okozhatja az esők pH-értékének csökkenését?","A légköri nitrogén (N₂) és argon beoldódása","Kén-dioxid","Nitrogén-oxidok","Szén-dioxid (szénsav)","N₂ és Ar gyakorlatilag nem oldódik savként. A normál esőnek is kb. 5,5 a pH-ja a CO₂ miatt.",1),
+Q("szmog","Mekkora a normál csapadék pH-értéke (a CO₂ beoldódása miatt)?","Kb. 5,5 (enyhén savas)","7 (semleges)","Kb. 8,5","Kb. 3","Extrém esetben savas esők pH-ja 2–2,5 is lehet.",0),
+Q("szmog","Hányszor magasabb a savkoncentráció pH 2 esetén a pH 5-höz képest?","1000-szer","3-szor","30-szor","100 000-szer","A pH logaritmikus skála: 1 egység = 10× koncentrációkülönbség → 3 egység = 10³.",0),
+Q("szmog","Mi a pH definíciója?","A hidrogénion (H⁺, ill. H₃O⁺) koncentrációjának tízes alapú negatív logaritmusa","A hidrogénion koncentrációjának természetes logaritmusa","A hidroxidion koncentrációja","A savmennyiség grammban megadva","pH = −log₁₀[H⁺].",0),
+Q("szmog","Miért pusztult ki a kanadai tavak fele az 1980-as évek savas esői miatt, míg a Balaton kevésbé érzékeny?","A kanadai tavak alapkőzete gránit (kicsi a közömbösítő hatása), a Balatoné karbonátos (mészkő, dolomit; pH~8) → nagy pufferkapacitás","A Balaton kisebb, ezért gyorsabban felhígul","Kanadában nagyobb volt a csapadékmennyiség","A Balatonban nincsenek halak","A befogadó puffer-kapacitása és az élőlények tűrőképessége határozza meg a károkat.",0),
+Q("szmog","Mi a savas esők hatása az erdőkre?","A levelek károsodnak, a talaj pH-ja csökken, ami a fémek/nyomelemek oldhatóságát növeli (Al-mérgezés, a szimbiotikus gombák pusztulása); a magasan fekvő erdők fokozottan veszélyeztetettek","Az erdők növekedése gyorsul a savas csapadék tápanyag-tartalma miatt","Csak a lombhullatókat érinti, a tűlevelűeket nem","A talaj lúgosodik","Savas ködbe burkolózhatnak a magasabban fekvő erdők.",0),
+Q("szmog","Mi volt az 1979-es genfi egyezmény tárgya?","Keretegyezmény az országhatárokon átterjedő légszennyezésekről (kén- és nitrogénvegyületek csökkentése, monitorozás)","Az ózonréteg védelme","Az üvegházhatású gázok csökkentése","A vizek eutrofizációja elleni küzdelem","1985 Helsinki: kénkibocsátás 30%-os csökkentése.",0),
+Q("szmog","Mit írt elő az 1999-es Gothenburgi egyezmény (2010-ig, Európában)?","Kén −63%, NOx −41%, VOC −40%, ammónia −17% kibocsátás-csökkentés","CO₂ −8%","Freonok −50%","Metán −30%","Gothenburg 1999.",0),
+Q("szmog","Mit írt elő az 1985-ös helsinki megállapodás?","A kénkibocsátás 30%-os csökkentését","Az ózonréteget károsító anyagok betiltását","A NOx 41%-os csökkentését","A CO₂ stabilizálását","Genf 1979 → Helsinki 1985 (−30% S) → Gothenburg 1999.",0)
+);
+
+/* ===== T7: SO2, NOx, CO ===== */
+add(
+Q("so2","Melyik sor jellemző a kén-dioxidra?","Színtelen, vízben jól oldódó, szúrós szagú gáz (víz → kénessav, kénsav); főleg kéntartalmú tüzelőanyagok (szén, olaj) égetéséből származik","Vöröses-barna, vízben rosszul oldódó gáz","Színtelen, szagtalan, vízben kevéssé oldódó gáz","Zöldes színű, szagtalan gáz","SO₂ bioindikátorai: zuzmók. Hatása: irritálja a nyálkahártyát, a légutakat.",0),
+Q("so2","Mi a kén-dioxid bioindikátora?","Zuzmófélék","Mohák","Fenyők","Algák","Bioindikátor: a szennyezettségre érzékenyen reagáló élőlény.",0),
+Q("so2","Melyik NEM lehet a SO₂ forrása?","Atomerőművi hasadás","Kéntartalmú szén és olaj égetése","Műtrágyagyártás","Alumínium- és acélgyártás","A SO₂ geotermikus folyamatokból is kerülhet a levegőbe.",0),
+Q("so2","Mit jelent az „aktív védelem” a SO₂-kibocsátás csökkentésénél?","A szennyező anyag keletkezésének csökkentése/megakadályozása (energiahordozó-váltás, megfelelőbb alapanyag, nyersanyag előtisztítása, tűztéri folyamatok szabályozása)","A kilépő gázok tisztítása","A határérték hígítással történő betartása","A szennyezett terület kármentesítése","Passzív védelem: kilépő gázok tisztítása (abszorpció, adszorpció).",0),
+Q("so2","Mit jelent a „passzív védelem” a SO₂-kibocsátás csökkentésénél?","A kilépő (füst)gázok tisztítása (abszorpció, adszorpció)","Az energiahordozó cseréje","A kőolajtermékek kénmentesítése","A tüzelőanyag elhagyása","Aktív védelem = a keletkezés megelőzése.",0),
+Q("so2","Melyik sor tartozik a „HDS” technológiához?","Hidrodeszulfurizálás: katalitikus kéntelenítő hidrogénezés; a szerves kénvegyületeket H₂S-sé alakítja (Mo/W katalizátor, Co/Ni társkatalizátor)","Kén-dioxid abszorpciója mészkőszuszpenzióval","A nitrogén-oxidok redukciója ammóniával","Kén-hidrogén elégetése elemi kénné","HDS: a kőolaj párlatok kéntartalmát <10 ppm S-re csökkenti.",1),
+Q("so2","Milyen hozzáadott gázra van szükség a HDS technológiában?","Hidrogén (H₂)","Oxigén (O₂)","Ammónia (NH₃)","Nitrogén (N₂)","HDS: szerves kén + H₂ → szénhidrogén + H₂S.",1),
+Q("so2","Milyen körülmények között megy végbe a HDS?","~300–400 °C, 40–70 bar H₂-nyomás, Mo (vagy W) katalizátor Co/Ni társkatalizátorral","~20 °C, légköri nyomás, vas-oxid","~150–450 °C, ammónia, zeolit","~500 °C, 50 bar, Fe₂O₃/Al₂O₃","HDS: 300–400 °C, 40–70 bar. A Claus-eljárás: Fe₂O₃/Al₂O₃, ~500 °C, 50 bar.",0),
+Q("so2","Mi a HDS-technológia terméke, amit a Claus-eljárásban dolgoznak fel?","Kén-hidrogén (H₂S)","Kén-dioxid","Elemi szén","Ammónia","H₂S → Claus → elemi kén.",0),
+Q("so2","Melyik sor tartozik a Claus-eljáráshoz?","A kén-hidrogén 1/3-ának elégetése SO₂-vé, majd a 2/3 H₂S oxidálása ezzel elemi kénné (Fe₂O₃ katalizátor Al₂O₃ hordozón)","Szerves kéntartalom hidrogénezése H₂S-sé","SO₂ elnyeletése mészkőszuszpenzióban","Nitrogén-oxidok redukciója karbamiddal","H₂S + 1,5 O₂ → SO₂ + H₂O; 2 H₂S + SO₂ → 3 S + 2 H₂O. Százhalombattán évi ~80 000 t kén keletkezik.",1),
+Q("so2","Mire hasznosítják a Claus-eljárás termékét, az elemi ként?","Kénsavgyártás, gumi vulkanizálás, fungicidek","Műtrágyák N-tartalmához és üzemanyagként","Sótartalom-csökkentésre az ivóvízben","Üvegházhatású gázok megkötésére","Százhalombatta: évi ~80 000 t kén.",0),
+Q("so2","Mi a Claus-eljárás katalizátora?","Fe₂O₃ Al₂O₃ hordozón (régebben bauxit)","Pt/Rh","Mo/Co","V₂O₅/TiO₂","Pt/Rh: NSCR; Mo: HDS.",0),
+Q("so2","Mennyi a maximális kéntartalom az EU közúti dízelben (ppm)?","10 ppm (10–15 ppm)","350 ppm","500 ppm","2000 ppm","Fejlődő országokban sokkal magasabb kéntartalom is megengedett (pl. 2001–10 000 ppm).",0),
+Q("so2","Mekkora a hajók üzemanyagának megengedett kéntartalma az IMO 2020-as előírása szerint (ECA-n kívül)?","Legfeljebb 0,50 m/m%","Legfeljebb 3,5 m/m%","Legfeljebb 0,10 m/m%","Legfeljebb 5 m/m%","Az ECA-területeken (Balti-tenger, Északi-tenger, észak-amerikai terület, USA Karib-térség) szigorúbb: 0,10 m/m%.",0),
+Q("so2","Melyik sor tartozik szorosan a kőszenek éghető kéntartalmához?","Főleg a szerves kén (merkaptánok, szulfidok, heterociklusos vegyületek)","Hamukén: a szulfátok és az elemi kén","Piritkén","A karbonátos hamu kalciumtartalma","A kéntartalom éghető kénre (főleg szerves kén) és hamukénre osztható.",1),
+Q("so2","Mi a fluidágyas kazánok lényege a SO₂-kibocsátás csökkentésében?","Az égést tápláló levegővel fluidizált homokágyba vezetik az őrölt mészkő–szénpor keveréket: CaCO₃ + SO₂ + ½O₂ → CaSO₄ + CO₂ (direkt SO₂-megkötés)","A szenet előzetesen hidrogénezik","Az égéstermékek ammóniás redukciója katalizátoron","A füstgáz mosása nátrium-hidroxiddal","Indirekt: CaCO₃ → CaO + CO₂, majd CaO + SO₂ + ½O₂ → CaSO₄.",0),
+Q("so2","Melyik oldatot alkalmazzák kén-dioxid abszorpciójához?","Mészkőszuszpenziót vagy mésszel meglúgosított vizet (Ca(OH)₂)","Sósavat","Híg kénsavat","Desztillált vizet nagy nyomáson","SO₂ + Ca(OH)₂ → CaSO₃ + H₂O; majd oxidáció CaSO₄ (gipsz); 95% fölötti kénmentesítés.",1),
+Q("so2","Mi keletkezik a mészkőszuszpenziós SO₂-abszorpció végterméke?","Gipsz (CaSO₄·2H₂O), amely az építőiparban hasznosítható (120–150 °C-on égetett gipsz)","Elemi kén","Szénsav","Ammónium-szulfát","A kalcium-szulfát félvizes állapota (CaSO₄·0,5H₂O) az égetett gipsz.",0),
+Q("so2","Mi a Venturi-mosó előnye?","Nagy toroksebesség, finom csepp, kiváló érintkezés; jó porleválasztás is (még 1 µm alatt is); hátránya a rövid tartózkodási idő → főleg kémiai reakcióval kísért abszorpciónál használják","Nincs szükség mosófolyadékra","Hosszú tartózkodási idő a gáznak","Csak szilárd részecskékre alkalmas, gázokra nem","A hatékonyság a mosófolyadék arányával és a toroksebességgel nő. Cseppleválasztó kell.",0),
+Q("so2","Melyik sorban láthatók a kén-dioxid adszorpciójához használatos adszorbensek?","Aktív szén, vas-oxid, cink-ferrit","Mészkő, gipsz, bauxit","Zeolit, platina, ródium","Szilikagél, nátrium-hidroxid, mész","Aktív szén: SO₂ + ½O₂ + H₂O → H₂SO₄ (400 °C-on regenerálás); vas-oxid 90–95%; ZnFe₂O₄ 99% (H₂S is).",1),
+Q("so2","Hogyan regenerálják a SO₂-t megkötött aktív szenet?","400 °C-on a kénsav elpárologtatásával","Hűtéssel és mosással","Mészkőszuszpenzióval","Nem lehet regenerálni","Az adszorbens jó tulajdonsága, hogy könnyen regenerálható.",0),
+Q("so2","Mi a SO₂ megkötése fluidágyas kazánban, ha CaCO₃-ot adagolnak?","Kalcium-szulfát (CaSO₄) keletkezik","Elemi kén keletkezik","Kalcium-nitrát keletkezik","Kalcium-hidroxid keletkezik","CaCO₃ + SO₂ + ½O₂ → CaSO₄ + CO₂.",0),
+Q("so2","Melyik sor jellemző a NO₂-re?","Vöröses-barna, szúrós szagú, vízben rosszul oldódó, erősen oxidáló és korrozív gáz; a hemoglobint methemoglobinná oxidálja","Színtelen, szagtalan gáz, amely a hemoglobinhoz kötődik","Színtelen, szúrós szagú, vízben jól oldódó","Zöldessárga, ózonszagú","NO₂ egészségügyi határérték: 100 / 85 / 40 µg/m³. Fő forrás: fosszilis tüzelőanyagok égetése (gépjárművek).",0),
+Q("so2","Mi a CO mérgező hatásának lényege?","A hemoglobinhoz kapcsolódik, leszorítja az oxigént → oxigénhiány az idegrendszerben és a szívizomban","A hemoglobint methemoglobinná oxidálja","A tüdő nyálkahártyáján savat képez (kénsav)","A DNS-t károsítja UV-sugárzáshoz hasonlóan","Színtelen, szagtalan, tökéletlen égés terméke. Tiszta levegőben kiürül a szervezetből.",0),
+Q("so2","Mi a termikus NOx?","Magas hőmérsékleten a levegő nitrogénjének és oxigénjének reakciójából keletkező nitrogén-oxid","A tüzelőanyag nitrogéntartalmú vegyületeinek oxidációjából keletkező NOx","A villámlás során keletkező NOx","A nitrifikáló baktériumok által termelt NOx","A „tüzelőanyag NOx” a N-tartalmú vegyületek oxidációjából keletkezik.",0),
+Q("so2","Mi a tüzelőanyag-NOx?","A tüzelőanyag nitrogéntartalmú vegyületeinek oxidációjából keletkező NOx","Magas hőmérsékleten a N₂ és O₂ reakciója","Természetes eredetű, villámlás okozta","A katalizátorból távozó nitrogén-oxid","Primer csökkentés: égésszabályozás (T, O₂), N-tartalom csökkentése.",0),
+Q("so2","Melyik a primer NOx-csökkentés módja?","Égésszabályozás (hőmérséklet, O₂) és a tüzelőanyag N-tartalmának csökkentése","Véggáz katalitikus redukciója","Abszorpció mosófolyadékban","Adszorpció","Véggáz-kezelés (szekunder): abszorpció, adszorpció, kémiai átalakítás (SCR, NSCR), katalitikus bontás.",0),
+Q("so2","Mi az NSCR módszer lényege?","Főleg gépjármű-konverterekben (Pt, Rh, Pd katalizátor, 400–600 °C): a NOx-ot N₂-né redukálják, közben a CO és a szénhidrogének oxidálódnak","NOx redukciója ammóniával 150–450 °C-on","NOx mosása vízzel","NOx adszorpciója aktív szénen","NSCR = szelektív nélküli katalitikus redukció (háromutas katalizátor).",1),
+Q("so2","Milyen katalizátor segíti a NOx redukcióját az NSCR módszerben?","Ródium (Rh) (a CO/HC oxidációját Pt, Pd végzi)","Vas-oxid","Mangán-dioxid","Nikkel","Redukció (Rh): 2NO + 2CO → N₂ + 2CO₂. Oxidáció (Pt, Pd): 2CO + O₂ → 2CO₂.",1),
+Q("so2","Milyen reaktánsok alkalmazhatók a NOx szelektív katalitikus redukciójához (SCR)?","Ammónia (NH₃) vagy ammóniát szolgáltató karbamid (urea)","Hidrogén és CO","Oxigén és ózon","Mészkő és gipsz","SCR: 4NO + 4NH₃ + O₂ → 4N₂ + 6H₂O; katalizátorok: MnOx, CrOx, Pt, Pd, módosított zeolitok; 150–450 °C; NOx: 1–5 ppm.",1),
+Q("so2","Milyen reaktánst alkalmaznak személygépkocsikban a NOx szelektív katalitikus redukciójához?","Karbamidoldatot (AdBlue, 32,5% urea)","Folyékony ammóniát","Tiszta hidrogént","Metanolt","A karbamid lebomlik ammóniává (2NH₃ + CO₂ ⇄ carbamate → urea).",1),
+Q("so2","Mi az SCR reakció végterméke?","N₂ + H₂O","NH₄NO₃","N₂O + H₂","NO₂ + H₂","A NOx ártalmatlan nitrogénné redukálódik.",0),
+Q("so2","Milyen hőmérsékleten működik az SCR?","150–450 °C","400–600 °C","~1200 °C","Szobahőmérsékleten","NSCR: 400–600 °C.",0),
+Q("so2","Mikor jelent meg először személygépjárművekben az SCR?","Az Euro-5 szabályozás időszakában; azóta, az Euro-6-tól egyre szélesebb körben, főleg dízel autókban","Az 1970-es években Japánban","Az 1990-es években az USA-ban erőművekben","2004-ben tehergépkocsikban","Az SCR: 1970-es évek Japán, 1980-as évek Európa (erőművek), 1990-es évek USA, 2004 Nissan (első mobil egység).",0),
+Q("so2","Mekkora az Euro-6 szabvány szerinti megengedett NOx-kibocsátás (a dia szerint)?","0,08 g/km","0,5 g/km","0,25 g/km","1,0 g/km","Euro-3 (2001) 0,5 g/km; Euro-4 (2006) 0,25 g/km; Euro-6 (2015) 0,08 g/km.",0)
+);
+
+/* ===== T8: üvegházhatás ===== */
+add(
+Q("uhg","A földfelszín kisebb vagy nagyobb hullámhosszú sugárzás formájában sugározza ki a napfényből elnyelt energiát?","Nagyobb hullámhosszú (távoli infravörös) sugárzás formájában","Kisebb hullámhosszú (UV) sugárzás formájában","Ugyanolyan hullámhosszú látható fényként","Röntgensugárzás formájában","A Nap fénye (látható) átjut a légkörön, a felszín elnyeli, felmelegszik és IR-t bocsát ki, melyet az ÜHG-k elnyelnek.",1),
+Q("uhg","Mi az üvegházhatás lényege?","A látható fény átjut a légkörön, a felszín elnyeli és infravörös sugárzásként kisugározza; ennek egy részét a légköri gázok elnyelési sávjaikban elnyelik és a légkör felmelegszik","A légkör az UV-sugárzást teljesen visszaveri","Az ózonréteg elnyeli az infravörös sugárzást","A CO₂ a látható fényt nyeli el és hővé alakítja","Ha az IR-t elnyelő gázok koncentrációja nő, az üvegházhatás fokozódik.",1),
+Q("uhg","Melyik gázmolekula NEM üvegházhatású az alábbiak közül?","Nitrogén (N₂) vagy oxigén (O₂)","Szén-dioxid (CO₂)","Metán (CH₄)","Dinitrogén-oxid (N₂O)","Csak a heteroatomos molekulák (H₂O, CO₂, CH₄, N₂O) nyelik el az IR-t, mert a rezgésük során változik a dipólusmomentum.",1),
+Q("uhg","Melyik molekulák nyelik el az infravörös sugárzást?","Heteroatomos molekulák (H₂O, CO₂, CH₄, N₂O)","Homoatomos kétatomos molekulák (N₂, O₂)","Kizárólag nemesgázok","Minden gáz egyformán","Ha az IR frekvenciája megegyezik a kémiai kötés rezgési frekvenciájával, elnyelődik.",0),
+Q("uhg","Mi írja le a sugárzás elnyelődését gázokban?","Lambert–Beer-törvény","Stokes-törvény","Henry-törvény","Freundlich-izoterma","A Lambert–Beer-törvény az intenzitás csökkenését írja le az úthossz és a koncentráció függvényében.",0),
+Q("uhg","Melyek a természetes üvegházhatású gázok?","Vízgőz, szén-dioxid, metán, ózon","Nitrogén, oxigén, argon","SF₆, HFC-k, PFC-k","CFC-k és halonok","A szintetikus ÜHG-k: SF₆, HFC-k, PFC-k.",0),
+Q("uhg","Mi az albedó?","Visszaverődési mutató: megadja, hogy a beeső sugárzás hány %-a verődik vissza (a kisebb albedójú területek nagyobb melegedést okoznak)","A felszín hőmérséklete","Az ÜHG-k elnyelési sávja","A légkör vastagsága","Hó és jég: 60–90%; szárazföld: 15–20%; nyílt víz: ~10%. A jégolvadás csökkenti az albedót → tovább fokozza a melegedést.",1),
+Q("uhg","Melyik sor vonatkozik az albedóhatásra?","A hó- és jégolvadás csökkenti az albedót, így több hő nyelődik el, ami tovább fokozza a felmelegedést","A hó és jég nagyobb hőt nyel el, mint a nyílt víz","A felhők csökkentik az albedót és hűtenek","Az albedó az üvegházgázok koncentrációját méri","Pozitív visszacsatolás.",1),
+Q("uhg","Melyik felszín visszaverő képessége (albedója) a legnagyobb?","Hóval, jéggel borított terület (60–90%)","Szárazföld (15–20%)","Nyílt víztükör (~10%)","Erdő (5%)","A kis albedójú felszín jobban melegszik.",0),
+Q("uhg","Melyek az üvegházhatás fokozódásának lehetséges következményei?","Tengeri jég és gleccserek olvadása, tengerszint emelkedése, sivatagosodás, élelmezési problémák, népességmigráció, gazdasági károk","Az ózonréteg vastagodása","A savas eső megszűnése","A CO₂-koncentráció csökkenése","Az olvadó övezetekből és a melegedő tengerekből metán-hidrát szabadulhat fel (pozitív visszacsatolás).",0),
+Q("uhg","Honnan szabadulhat fel további metán a felmelegedés hatására?","Az olvadó permafrosztból és a melegedő tengerek metán-hidrátjaiból","A fák fotoszintéziséből","A CO₂ megkötéséből","Az ózonréteg bomlásából","Metán-hidrát: jégszerű anyag, amely metánt zár magába.",0),
+Q("uhg","Melyik az üvegházhatású gázok főbb antropogén forrása a CO₂ esetében?","Fosszilis energiahordozók elégetése: hőerőművek, ipar, közlekedés","Rizstermesztés és állattenyésztés","Műtrágyahasználat","Hűtőközegek használata","CH₄: mezőgazdaság (rizs, állatok), hulladék, szennyvíz, olaj-/gázkitermelés. N₂O és NOx: erőművek, közlekedés, műtrágya.",0),
+Q("uhg","Melyik a metán fő antropogén forrása?","Mezőgazdaság (rizstermesztés, állattenyésztés), hulladékgazdálkodás, szennyvízkezelés, olaj- és gázkitermelés","Gépjárművek kipufogógáza","Cementgyártás","Hűtőszekrények","N₂O: főként műtrágya.",0),
+Q("uhg","Melyek a szintetikus üvegházhatású gázok?","SF₆, HFC-k (fluorozott szénhidrogének), PFC-k (perfluor-karbonok)","CO₂, CH₄, N₂O","CO, NOx, SO₂","N₂ és O₂","Főleg ipari folyamatokból; oldószer, hűtőközeg, habosító, töltőanyag; fajlagos üvegházhatásuk a CO₂ többezerszerese lehet.",0),
+Q("uhg","Mit fejez ki a GWP (globális felmelegedési potenciál)?","Egységnyi tömegű gáz felmelegedést okozó hatása hányszorosa az azonos tömegű CO₂-énak (adott időhorizontra)","A gáz légköri tartózkodási ideje években","A gáz mennyisége ppm-ben","A gáz által elnyelt hullámhossz","GWP(CO₂) = 1.",1),
+Q("uhg","A GWP értékük alapján állítsa helyes (növekvő) sorrendbe a szén-dioxidot, a metánt és a HFC-ket!","CO₂ < CH₄ < HFC-k","CH₄ < CO₂ < HFC-k","HFC-k < CH₄ < CO₂","CO₂ < HFC-k < CH₄","GWP 100 év: CO₂ = 1; CH₄ = 25; N₂O = 298; CF₄ = 7390; SF₆ = 22 800; HFC-k több ezer.",1),
+Q("uhg","Mekkora a metán GWP-je 100 éves időhorizonton?","25","1","298","7390","20 éves: 72; 500 éves: 7,6.",0),
+Q("uhg","Mekkora a N₂O GWP-je 100 éves időhorizonton?","298","25","1","22 800","N₂O: 289 (20 év), 298 (100 év), 153 (500 év); élettartama 114 év.",0),
+Q("uhg","Mekkora az SF₆ GWP-je 100 éves időhorizonton?","22 800","25","298","1","20 év: 16 300; 500 év: 32 600. Élettartama 3200 év. 1 t SF₆ ≈ 16 ezer t CO₂ (20 évre).",0),
+Q("uhg","Mekkora a CO₂ GWP-je?","1 (viszonyítási alap)","25","0","100","GWP_CO₂ = 1 minden időhorizonton.",0),
+Q("uhg","Mi a Kigali megállapodás (2016) tárgya?","A HFC-k (fluorozott szénhidrogének) kibocsátásának/használatának visszaszorítása (a fejlett országok 2019-től csökkentik)","Az ózonréteget károsító CFC-k betiltása","A CO₂-kvóták kereskedelme","A metánkibocsátás 30%-os csökkentése","Mely gázok kibocsátáscsökkentésével foglalkozik a Kigali megállapodás? → HFC-k.",1),
+Q("uhg","Mit vállalt az EU a HFC-k használatáról?","2026/30-tól csak a GWP ≤ 150 értékű anyagok engedélyezettek; 2050-re teljesen felhagy a HFC-használattal","2020-ig kivezeti a CO₂-t","A HFC-ket a CFC-k váltották, tehát nincs szabályozás","2100-ig csökkenti 5%-kal","Helyettesítők: propán, ammónia, szén-dioxid; begyűjtés → újrahasznosítás/ártalmatlanítás.",0),
+Q("uhg","Mi volt az 1992-es rioi éghajlatváltozási keretegyezmény sajátos kompromisszuma?","A fejlődő országokat nem kötelezte konkrét vállalásra („közös, de megkülönböztetett felelősség”); az USA elutasította a kötelező célokat","Minden ország azonos mértékű kötelező csökkentést vállalt","Csak az USA vállalt kötelezettséget","Betiltották a fosszilis tüzelőanyagokat","EU: 2000-ig stabilizálás az 1990-es szinten.",0),
+Q("uhg","Mi jellemezte a Kiotói jegyzőkönyvet (1997)?","38 ország és az EU konkrét vállalása; bázisév 1990; 6 gáz együttesére (CO₂-egyenértékben); rugalmassági szabályok: 5 év átlaga, emissziókereskedelem, CO₂-megkötés (erdősítés)","Minden ország kötelező vállalása","Csak CO₂-ra vonatkozó, bázisév 2000","Az USA vezető szerepe a végrehajtásban","Rugalmassági szabályok az USA kezdeményezésére.",0),
+Q("uhg","Hogyan végződött a 2009-es koppenhágai klímakonferencia?","Kudarccal: 193 ország csak egy rövid, kevés konkrétumot tartalmazó politikai nyilatkozatot fogadott el","Elfogadták a Párizsi Megállapodást","Aláírták a Kigali módosítást","Jogilag kötelező célokat fogadtak el 2030-ra","Célja a 2012-ben lejáró Kiotói egyezmény felváltása volt.",0),
+Q("uhg","Melyik az egyetlen igazán jelentős megoldás a CO₂-emisszió csökkentésére?","A fosszilis energiahordozók kiváltása (alternatív energiaforrások)","A CO₂ gázmosása vízzel","A kilépő gázok szűrése","Az erdők kivágása","Az ÜHG-csökkentés további módjai: magas GWP-jű anyagok mellőzése, mezőgazdasági reformok, kilépő gázok tisztítása, metán hasznosítása, CO₂-megkötés.",0),
+Q("uhg","Miért jobb elégetni a képződő metánt, mint kiengedni a légkörbe?","Mert a keletkező CO₂ GWP-je kisebb a metánénál","Mert az égés során nem keletkezik üvegházgáz","Mert a metán mérgező","Mert a CO₂-nak nincs üvegházhatása","Hasznosítás hiányában is jobb a kisebb GWP-jű CO₂.",0),
+Q("uhg","Mit csinál az Orca/Mammoth (Climeworks, Izland)?","Levegőből szén-dioxidot von ki és föld alatt, bazaltkőben ásványosítja","Metánt éget el","Szén-dioxidból üzemanyagot állít elő a felszínen","Nitrogén-oxidot redukál","Orca: évi 4000 t; Mammoth (2024): évi 36 000 t CO₂. A CO₂-t vízzel elegyítik és ~1000 m mélyen bazaltba injektálják.",0),
+Q("uhg","Melyik a felsoroltak közül az ÜHG-kibocsátás csökkentésének „aktív védelmi” módja?","Magas GWP-jű anyagok használatának mellőzése, fosszilis energiahordozók kiváltása","A kilépő gázok tisztítása","CO₂-megkötés","Metán égetése","Aktív: a keletkezés megelőzése. Passzív: kilépő gázok tisztítása, metán hasznosítása, CO₂-megkötés.",0)
+);
+
+/* ===== T9: ózon ===== */
+add(
+Q("ozon","Hogyan keletkezik az ózon a sztratoszférában?","A <240 nm-es UV bontja az O₂-t atomos oxigénre, amely más O₂-molekulákkal reagálva O₃-at hoz létre","A CFC-k bomlásából","A villámlás hatására a troposzférában","A CO₂ és az O₂ reakciójából","Az O₃ elnyeli a <315 nm-es UV-t is és bomlik (O₂ + O). Ez a ciklus védi a Földet.",1),
+Q("ozon","Mi az ózonréteg szerepe?","Elnyeli a káros UV-sugárzást (UV-C teljesen, UV-B nagymértékben, UV-A kismértékben), védve az élővilágot","Elnyeli az infravörös sugárzást és melegíti a Földet","Visszaveri a látható fényt","Megköti a CO₂-t","UV-sugárzás nélkül az ózonréteg nélkül károsítaná a DNS-t és a sejtek más kémiai kötéseit.",1),
+Q("ozon","Melyik állítás igaz az ózonréteg vonatkozásában?","A sztratoszférában az ózon védő, a troposzférában viszont légszennyező és üvegházhatású gáz","Az ózon a troposzférában is védőréteget alkot","Az ózon csak természetes forrásból származik","Az ózonréteg a mezoszférában található","Troposzférikus ózon: erélyes oxidálószer, a fotokémiai szmog komponense.",1),
+Q("ozon","Mit mutat a Dobson-egység (DU)?","Az ózonréteg „képzeletbeli” vastagságát: 1 DU = 0,01 mm (atmoszférikus nyomásra sűrítve)","Az ózon koncentrációját ppm-ben","Az UV-index értékét","Az ózon bomlási sebességét","300 DU = 3 mm (egészségesnek mondható érték).",0),
+Q("ozon","Milyen Dobson-egység alatt beszélünk „ózonlyukról”?","220 DU alatt","300 DU alatt","100 DU alatt","500 DU alatt","A valaha mért legkisebb érték 73 DU volt (1994).",1),
+Q("ozon","Mekkora az „egészséges” globális átlagos ózonréteg vastagság?","300 DU (= 3 mm)","30 DU","3000 DU","100 DU","1 DU = 0,01 mm.",0),
+Q("ozon","Mi okozza elsősorban az ózon bomlását és az ózonréteg elvékonyodását?","A sztratoszférába feljutó atomi klór és bróm (CFC-k, HCFC-k, halonok bomlásából)","A CO₂-koncentráció növekedése","A kén-dioxid","A NOx a talajszinten","CFC-k, HCFC-k, halonok = ODS (ozone depleting substances).",1),
+Q("ozon","Egyetlen klóratom kb. hány ózonmolekulát képes lebontani?","Több tízezer – több százezer","Kb. 10","Kb. 100","Kb. 1 000","A bróm kb. 45-ször hatékonyabban bontja az ózont, mint a klór.",1),
+Q("ozon","Mennyire hatékonyabb a bróm az ózonbontásban a klórnál?","Kb. 45-ször","Kb. 2-szer","Ugyanannyira","Kb. 1000-szer","A halonokat (Halon-1301, Halon-1211) tűzoltásban használták.",0),
+Q("ozon","Mikor a legerősebb az ózonbontás és hol alakul ki az ózonlyuk?","A hideg téli hónapokban a sarki területek fölött (Antarktisz: 1970-es évek, Északi-sark: 1990-es évek óta)","Nyáron a trópusok fölött","Egész évben egyenletesen a középső szélességeken","Csak az Északi-sark felett, 2000 óta","Az ózonlyuk következménye: nyári UV-növekedés → bőrrák, szemkárosodás.",0),
+Q("ozon","Hol a legvastagabb az ózonréteg, és mikor a legvékonyabb?","A trópusok felett a legvastagabb, a sarkvidékeken a legvékonyabb; nyáron a legmagasabb, télen a legalacsonyabb a koncentráció","A sarkvidékeken a legvastagabb, télen magasabb","Mindenhol egyforma","Az egyenlítő fölött a legvékonyabb","Az ózonréteg vastagsága az évszaktól és a földrajzi szélességtől függ.",1),
+Q("ozon","Milyen egészségi hatásokkal jár az ózonréteg elvékonyodása?","Bőrrák, szemkárosodás, DNS-károsodás az élőlényekben","Légzőszervi irritáció a talajszinten az ózon miatt","Savas esők","Eutrofizáció","UV-B fokozott lejutása.",0),
+Q("ozon","Mi volt az 1987-es Montreali Jegyzőkönyv?","Konkrét kötelezettségeket rögzített 5 freonvegyületre: 1993-ig 20%-os, 1998-ig 50%-os csökkentés","Keretegyezmény önkéntes csökkentésekről (Bécs)","Az üvegházhatású gázok csökkentése","A HFC-k betiltása","1985 Bécs: keretegyezmény; 1990 London: bővítették a körét; 1992 Koppenhága: halonok 1994-ig, CFC 1996-ig kiváltandó; 1999 Peking: a fejlődő országok felmentésének megszüntetése.",0),
+Q("ozon","Mit tartalmazott az 1985-ös bécsi egyezmény?","Keretegyezmény önkéntes csökkentésekről, mérések és kutatások összehangolásáról","Konkrét CFC-csökkentési százalékokat","A halonok betiltását 1994-ig","A fejlődő országok felmentésének megszüntetését","Bécs 1985 → Montreal 1987 (konkrét).",0),
+Q("ozon","Mikor várható az ózonréteg teljes helyreállása a jelenlegi előrejelzések szerint?","Északi félteke és közepes szélességek: ~2030; déli félteke: ~2050; Antarktisz: ~2060","Már 2010-re helyreállt","2100 után","Soha nem áll helyre","2000 óta 1–3% körüli sebességgel áll helyre a sztratoszféra főbb részein. (NASA 2018: első közvetlen bizonyíték a Montreali Jegyzőkönyv hatására.)",0),
+Q("ozon","Mekkora a sértetlen sztratoszférikus ózon kb. koncentrációja?","Kb. 10 ppm","Kb. 1 ppm","Kb. 1000 ppm","Kb. 21 %","Százezer molekulából egy ózon (10 ppm).",0),
+Q("ozon","Milyen sugárzást nyel el az ózon, mely bontja az O₂-t?","<240 nm-es UV (az ózon pedig a <315 nm-es UV-t nyeli el)","Látható fény","Infravörös sugárzás","Mikrohullámú sugárzás","UV-C: 100–240 nm; UV-B 240–315 nm.",0)
+);
+
+/* ===== T10: por, porleválasztás ===== */
+add(
+Q("por","Mit jelent a PM₁₀ és a PM₂,₅?","A 10 µm-nél, ill. 2,5 µm-nél kisebb lebegő részecskék","A 10 mm-nél és 2,5 mm-nél nagyobb részecskék","A 10 nm-nél és 2,5 nm-nél kisebb részecskék","A 10%-os és 2,5%-os nedvességtartalmú por","TSP: összes lebegő portartalom.",0),
+Q("por","Mekkora az emberi haj átmérője a PM-diagramon (EPA)?","50–70 µm","5–7 µm","0,5 µm","500 µm","Finom strand-homok: 90 µm; PM₁₀: <10 µm; PM₂,₅: <2,5 µm.",0),
+Q("por","Hogyan jut a por az emberi szervezetbe a mérete alapján?","A 10 µm-nél nagyobb részecskék szinte 100%-ban az orrban rekednek, az 1 µm-nél kisebbek mélyen behatolhatnak a tüdőbe","A nagyobb részecskék jutnak mélyebbre","Minden méret egyformán a tüdőbe jut","Csak a 100 µm-nél nagyobbak veszélyesek","5–10 µm körüliek 60–80%-a az orrban reked.",0),
+Q("por","Melyik halálozási oknak NEM felelőse nagy százalékban a levegő porszennyezése?","Közlekedési balesetek","Szívbetegség","Tüdőrák","Tüdőgyulladás és más légúti betegségek","WHO 2008: a porterhelés növeli a légzőszervi, érrendszeri és rákos halálesetek számát.",1),
+Q("por","Melyik NEM természetes por-forrás?","Széntüzelés, cementgyártás","Talajerózió","Vulkáni tevékenység","Növényi pollenek","Antropogén források: szén, olaj, fa, hulladék tüzelése, közlekedés, ipar (bányászat, cementgyártás).",0),
+Q("por","Mely porleválasztók szerepeltek az előadáson?","Porülepítő kamra, zsalus (ütközéses) leválasztó, ciklon/multiciklon, porszűrők (szövetszűrő), gázmosók (Venturi), elektrosztatikus leválasztó","Csak ciklon","Csak elektrosztatikus","Hűtőtorony és kondenzátor","Ezeket kell vázlatosan tudni.",0),
+Q("por","Melyik egy valós porleválasztó berendezés?","Elektrosztatikus porleválasztó","Katalitikus gázégő","Fluidágyas fagyasztó","Töltetes desztilláló oszlop","Valós: porülepítő kamra, zsalus leválasztó, ciklon, multiciklon, szövetszűrő, gázmosó, ESP.",1),
+Q("por","Fejezze be helyesen: A porülepítő kamrákban …","a nagyobb áramlási keresztmetszet miatt kisebb a lineáris áramlási sebesség, így a részecskék a gravitáció hatására leülepednek; gyenge hatásfokuk miatt előleválasztóként használják","a gázt nagy sebességgel forgatják, így a centrifugális erő választja le a port","a port elektromos térben töltik fel","a gázt szövetszűrőn vezetik át","A porkamrák és ütközéses leválasztók gyenge hatásfokúak, koptató porok előleválasztói lehetnek.",1),
+Q("por","Hogyan működik a zsalus porleválasztó?","A gáz a zsaluk ütközése miatt elveszíti mozgási energiáját, az összetapadás miatt nő a részecskeméret, így leválik","A porszemcséket elektromosan töltik","A gázt oldószeren vezetik át","A gázt hűtik és kondenzálják","Ütközéses leválasztó.",0),
+Q("por","Melyik sor igaz a porleválasztó ciklonokra?","Centrifugális erő elvén működő, a legelterjedtebb mechanikus porleválasztó; nincs mozgó alkatrész; általában 10 µm-nél nagyobb porokat választ le","Forgó alkatrészekkel működik, a finom (<1 µm) porokat is leválasztja","Elektromos térben választja le a port","Szövetszűrő segítségével működik","Fő részei: gázbevezető csonk, hengeres rész, kúpos rész, porkivezető nyílás, merülőcső (gázkivezetés), portartály.",1),
+Q("por","Mi a ciklon határszemcséje?","A ciklonban még éppen leválasztható legkisebb részecske","A ciklonból legnehezebben kivezethető részecske","A ciklon falának legvékonyabb pontja","A betáplált por átlagos mérete","A határszemcse átmérőjét a geometria, a gázbevezetés módja és a gáz jellemzői határozzák meg.",0),
+Q("por","Hogyan csökkenthető a határszemcse átmérője egy ciklonnál?","A ciklon átmérőjének csökkentésével – ezért építenek több kis ciklont összeépítve (multiciklon)","A ciklon átmérőjének növelésével","A gáz sebességének csökkentésével","Mozgó alkatrészek beépítésével","Adott gázmennyiség több kisebb ciklonnal nagyobb hatásfokkal kezelhető.",0),
+Q("por","Mi történik a ciklon gázsebességének növelésekor?","A leválasztási hatásfok nő, de nő a nyomásesés is","A hatásfok csökken, a nyomásesés is","A hatásfok nő, a nyomásesés csökken","Nem változik semmi","Ez a kompromisszum a ciklonok tervezésénél.",1),
+Q("por","Mi a multiciklon?","Több kisebb átmérőjű, összeépített ciklon","Egyetlen nagy átmérőjű ciklon","Elektromosan töltött ciklon","Nedves ciklon vízpermettel","Kisebb átmérő → kisebb határszemcse.",0),
+Q("por","Milyen részecskék leválasztására alkalmas az elektrosztatikus porleválasztó?","Akár 0,1 µm-es, sőt <1 µm-es részecskék is jó hatásfokkal","Csak 10 µm-nél nagyobb részecskék","Csak gőzök és gázok","Csak vízcseppek","ESP: nagyfeszültségű egyenáram, szóróelektróda (−), leválasztó elektróda (+).",1),
+Q("por","Melyik sor igaz az elektrosztatikus porleválasztásra?","Kis ellenállás és karbantartási igény, akár 800 °C-ig használható; hátránya a nagy beruházási költség és nagy helyigény","Olcsó, kis helyigényű, de csak nagy szemcsékre működik","Forgó alkatrészekkel dolgozik, ezért sok karbantartást igényel","A gázt vízzel mossák, ezért a hatásfok kicsi","Az elektródákat időszakosan ütemes kopogtatással tisztítják a portól.",1),
+Q("por","Hogyan működik az elektrosztatikus porleválasztó?","A szóró- és leválasztó elektróda közötti potenciálkülönbség ionizálja a gázt; a porszemcsék feltöltődnek és a leválasztó elektródához áramolnak","A gázt hűtéssel kondenzálják","A port mágneses térben választják le","A porszemcsék a nehézségi erő hatására ülepednek","A szóróelektróda negatív, a leválasztó pozitív.",0),
+Q("por","Melyik porleválasztó éri el a legnagyobb hatásfokot a 0,1–0,01 µm-es szemcsékre (>99%)?","Porszűrők (főleg szövetszűrők)","Porülepítő kamra","Zsalus leválasztó","Ciklon","Nagy portartalmú gázoknál főleg szövetszűrő; tisztítás mechanikus vagy pneumatikus módszerrel (sűrített levegő fúvókán keresztül); nyomó- és szívóüzemben is működik.",0),
+Q("por","Mi okozza a szövetszűrő nyomásesését?","A szűrőréteg és a lerakódó porréteg ellenállása együtt","Csak a szűrőréteg","Csak a lerakódó por","A gáz hőmérséklete","A lerakódott por miatt megnő az ellenállás → tisztítás szükséges.",0),
+Q("por","Melyik sor igaz a Venturi-mosóra?","Jó porleválasztási hatásfok még 1 µm alatt is; a hatásfok a mosófolyadék arányával és a toroksebességgel nő","Nem tartalmaz mosófolyadékot","Csak gázok elnyelésére alkalmas, port nem választ le","A hatásfok a toroksebesség csökkentésével nő","Mosóknál cseppleválasztó is szükséges.",0)
+);
+/* ================= Alkalmazás ================= */
+const TOPICS=[
+ {id:"tort",n:"Környezetvédelem története",l:"1. előadás"},
+ {id:"alap",n:"Alapfogalmak, IPPC, BAT",l:"2. előadás"},
+ {id:"diszp",n:"Diszperz rendszerek, ülepítés, szűrés",l:"2. előadás"},
+ {id:"hom",n:"Homogén elválasztások (abszorpció, adszorpció…)",l:"2. előadás"},
+ {id:"legkor",n:"Légkör és a levegő összetétele",l:"3. előadás"},
+ {id:"szmog",n:"Szmog, határértékek, savas eső",l:"3. előadás"},
+ {id:"so2",n:"SO₂, NOₓ, CO és kezelésük",l:"3. előadás"},
+ {id:"uhg",n:"Üvegházhatás, GWP, egyezmények",l:"3. előadás"},
+ {id:"ozon",n:"Ózonréteg, ózonlyuk",l:"3. előadás"},
+ {id:"por",n:"Por és porleválasztás",l:"3. előadás"}
+];
+const TMAP=Object.fromEntries(TOPICS.map(t=>[t.id,t]));
+const ZH_DATES=[{n:"1. ZH",d:"2026-10-19"},{n:"2. ZH",d:"2026-12-07"},{n:"Javító ZH",d:"2026-12-14"}];
+const LS_KEY="kt-zh-gyakorlo-v1", LS_THEME="kt-zh-theme";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function hash(s){let h=5381;for(let i=0;i<s.length;i++)h=((h<<5)+h+s.charCodeAt(i))|0;return (h>>>0).toString(36)}
+BANK.forEach(q=>q.id=hash(q.q+"|"+q.o[0]));
+
+let store={stats:{},hist:[]};
+try{const r=localStorage.getItem(LS_KEY);if(r){const p=JSON.parse(r);if(p&&p.stats)store=p}}catch(e){}
+function save(){try{localStorage.setItem(LS_KEY,JSON.stringify(store))}catch(e){}}
+function st(q){return store.stats[q.id]||(store.stats[q.id]={box:0,seen:0,ok:0,no:0})}
+function rec(q,correct){const s=st(q);s.seen++;if(correct){s.ok++;s.box=Math.min(3,s.box+1)}else{s.no++;s.box=0}s.last=Date.now();save()}
+const stat0=q=>store.stats[q.id];
+const isMastered=q=>{const s=stat0(q);return !!s&&s.box>=2};
+const isUnseen=q=>!stat0(q)||stat0(q).seen===0;
+const isWeak=q=>{const s=stat0(q);return !!s&&s.seen>0&&s.box<2};
+
+const rnd=n=>Math.floor(Math.random()*n);
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}return a}
+function weighted(pool,n){
+  const out=[],items=pool.map(q=>({q,w:wt(q)}));
+  while(out.length<n&&items.length){
+    const tot=items.reduce((a,b)=>a+b.w,0);let r=Math.random()*tot,k=0;
+    for(;k<items.length-1;k++){r-=items[k].w;if(r<=0)break}
+    out.push(items[k].q);items.splice(k,1);
+  }
+  return out;
+}
+function wt(q){const s=stat0(q);let w;
+  if(!s||s.seen===0)w=3;else if(s.box===0)w=4.5;else if(s.box===1)w=2;else if(s.box===2)w=0.9;else w=0.25;
+  return w*(q.z?1.35:1)}
+const prep=q=>({q,order:shuffle([0,1,2,3]),ans:null,retry:false});
+
+/* ===== állapot ===== */
+let view="home", S=null, timerId=null, tab="home", simN=30;
+try{const v=+localStorage.getItem(LS_KEY+"-n");if([20,30,40].includes(v))simN=v}catch(e){}
+const NAV=[["home","Kezdőlap"],["cheat","Puska"],["stats","Statisztika"]];
+
+function setView(v){view=v;render()}
+function renderTabs(){
+  $("#tabs").innerHTML=NAV.map(([k,t])=>`<button type="button" data-act="nav" data-v="${k}" ${tab===k?'aria-current="page"':''}>${t}</button>`).join("");
+  $("#qcount").textContent=BANK.length+" kérdés";
+}
+function render(keep){
+  renderTabs();
+  const el=$("#app");
+  if(timerId&&view!=="quiz"){clearInterval(timerId);timerId=null}
+  if(view==="home")el.innerHTML=homeHTML();
+  else if(view==="cheat")el.innerHTML=cheatHTML();
+  else if(view==="stats")el.innerHTML=statsHTML();
+  else if(view==="quiz")el.innerHTML=quizHTML();
+  else if(view==="result")el.innerHTML=resultHTML();
+  if(!keep)window.scrollTo({top:0,behavior:"auto"});
+}
+
+/* ===== kezdőlap ===== */
+function daysTo(d){const t=new Date(d+"T08:00:00");return Math.ceil((t-Date.now())/864e5)}
+function topicStats(id){const qs=BANK.filter(q=>q.t===id);const m=qs.filter(isMastered).length,l=qs.filter(isWeak).length;return{n:qs.length,m,l,u:qs.length-m-l}}
+function homeHTML(){
+  const tot=BANK.length,m=BANK.filter(isMastered).length,weak=BANK.filter(isWeak).length,seen=BANK.filter(q=>!isUnseen(q)).length;
+  let ok=0,no=0;BANK.forEach(q=>{const s=stat0(q);if(s){ok+=s.ok;no+=s.no}});
+  const acc=ok+no?Math.round(100*ok/(ok+no)):null;
+  const zhq=BANK.filter(q=>q.z);
+  const cds=ZH_DATES.map(z=>({...z,dd:daysTo(z.d)})).filter(z=>z.dd>=0).map(z=>`<div class="cd"><b>${z.dd}</b><span>nap · ${esc(z.n)} · ${z.d.slice(5).replace("-",". ")}. (előre láthatóan)</span></div>`).join("");
+  return `
+  <section class="card" style="display:flex;flex-direction:column;gap:14px">
+    <h1>Pontmaximalizálás, minimális energiával</h1>
+    <p class="lead">${tot} kérdés a három előadásból. Az ${zhq.length} jelölt kérdés közvetlenül a tanár által megadott ZH-példákra épül, a többi a „csak példák” mögötti anyagot fedi le. A program a hibáidat ismétli leggyakrabban, így csak azzal foglalkozol, amit még nem tudsz.</p>
+    ${cds?`<div class="countdown">${cds}</div>`:""}
+  </section>
+
+  <section class="modes">
+    <button class="mode primary" type="button" data-act="start" data-mode="practice">
+      <span class="t">Okos gyakorlás · 10 kérdés</span>
+      <span class="sub">Új és hibás kérdések előre, a tanári példatípusok kiemelve. Naponta 1–2 kör elég.</span></button>
+    <button class="mode" type="button" data-act="start" data-mode="sim">
+      <span class="t">ZH-szimuláció</span>
+      <span class="sub">Éles próba: időkorlát, visszajelzés csak a végén, jegy a követelmények szerint.</span></button>
+    <button class="mode" type="button" data-act="start" data-mode="zh">
+      <span class="t">Tanári példatípusok</span>
+      <span class="sub">${zhq.length} kérdés, amely a diákon szereplő ZH-példák alapján készült. Itt a legnagyobb a haszon.</span></button>
+    <button class="mode" type="button" data-act="start" data-mode="errors">
+      <span class="t">Hibanapló · ${weak}</span>
+      <span class="sub">${weak?"A még nem megtanult kérdéseid, a legutóbb tévesztettek elöl.":"Még nincs mit ismételni. Kezdj egy gyakorlással."}</span></button>
+  </section>
+
+  <div class="row"><label for="simN" class="sub">ZH-szimuláció hossza:</label>
+    <select id="simN"><option value="20"${simN===20?" selected":""}>20 kérdés · 20 perc</option><option value="30"${simN===30?" selected":""}>30 kérdés · 30 perc</option><option value="40"${simN===40?" selected":""}>40 kérdés · 40 perc</option></select>
+    <span class="note">A valódi ZH hossza nincs megadva, ezért 1 perc/kérdés.</span></div>
+
+  <section class="card">
+    <div class="stats">
+      <div class="stat"><b>${m}<span style="display:inline;font-size:15px;color:var(--muted)"> / ${tot}</span></b><span>megtanult kérdés</span></div>
+      <div class="stat"><b>${seen}</b><span>már látott kérdés</span></div>
+      <div class="stat"><b>${acc===null?"–":acc+"%"}</b><span>eddigi pontosság</span></div>
+      <div class="stat"><b>${weak}</b><span>ismétlésre vár</span></div>
+    </div>
+    <p class="note" style="margin-top:10px">„Megtanult”: legalább kétszer egymás után helyesen válaszoltál rá. Egy hiba visszaállítja.</p>
+  </section>
+
+  <section class="card">
+    <h2 style="margin-bottom:14px">Témakörök</h2>
+    <div class="topics">
+    ${TOPICS.map(t=>{const s=topicStats(t.id);return `
+      <div class="topic-row">
+        <div class="nm">${esc(t.n)}<small>${t.l} · ${s.n} kérdés</small></div>
+        <div class="bar" role="img" aria-label="${s.m} megtanult, ${s.l} tanulás alatt, ${s.u} új"><i class="m" style="width:${100*s.m/s.n}%"></i><i class="l" style="width:${100*s.l/s.n}%"></i></div>
+        <button class="btn ghost small" type="button" data-act="start" data-mode="topic" data-t="${t.id}">Gyakorlás</button>
+      </div>`}).join("")}
+    </div>
+  </section>
+  <p class="note">A haladásod csak ebben a böngészőben tárolódik. Zöld: megtanult, sárga: tanulás alatt, szürke: még nem láttad.</p>`;
+}
+
+/* ===== indítás ===== */
+function start(mode,t){
+  let pool=[],feedback=true,title="",deadline=null;
+  if(mode==="practice"){pool=weighted(BANK,10);title="Okos gyakorlás"}
+  else if(mode==="zh"){const zq=BANK.filter(q=>q.z);pool=weighted(zq,Math.min(20,zq.length));title="Tanári példatípusok"}
+  else if(mode==="errors"){const w=BANK.filter(isWeak);w.sort((a,b)=>(stat0(b).last||0)-(stat0(a).last||0));pool=shuffle(w.slice(0,15));title="Hibanapló"}
+  else if(mode==="topic"){const qs=BANK.filter(q=>q.t===t);const pend=qs.filter(q=>!isMastered(q));pool=shuffle(pend.length?pend:qs);title=TMAP[t].n}
+  else if(mode==="sim"){
+    const n=simN;pool=simPick(n);feedback=false;title="ZH-szimuláció";deadline=Date.now()+n*60000;
+  }
+  if(!pool.length){S=null;alert_empty();return}
+  S={mode,title,feedback,items:pool.map(prep),idx:0,start:Date.now(),deadline,done:false,retried:{}};
+  tab="home";setView("quiz");
+  if(deadline){timerId=setInterval(tick,1000)}
+}
+function alert_empty(){const el=$("#app");el.insertAdjacentHTML("afterbegin",`<div class="expl bad" role="alert">Ebben a módban most nincs kérdés. Kezdj egy okos gyakorlással, és a hibáid ide kerülnek.</div>`)}
+function simPick(n){
+  const per={};TOPICS.forEach(t=>per[t.id]=BANK.filter(q=>q.t===t.id));
+  const tot=BANK.length;let out=[];
+  TOPICS.forEach(t=>{const k=Math.max(1,Math.round(n*per[t.id].length/tot));out=out.concat(weighted(per[t.id],k))});
+  out=shuffle(out);
+  if(out.length>n)out=out.slice(0,n);
+  if(out.length<n){const rest=shuffle(BANK.filter(q=>!out.includes(q)));out=out.concat(rest.slice(0,n-out.length))}
+  return out;
+}
+function tick(){
+  if(!S||!S.deadline||view!=="quiz")return;
+  const left=Math.max(0,S.deadline-Date.now());
+  const el=$("#timer");if(el){const m=Math.floor(left/60000),s=Math.floor(left/1000)%60;el.textContent=String(m).padStart(2,"0")+":"+String(s).padStart(2,"0");el.classList.toggle("low",left<5*60000)}
+  if(left<=0)finish();
+}
+
+/* ===== kvíz ===== */
+const L="ABCD";
+function quizHTML(){
+  const it=S.items[S.idx],n=S.items.length,q=it.q;
+  const answered=it.ans!==null;
+  const showFb=S.feedback&&answered;
+  const opts=it.order.map((oi,pos)=>{
+    let cls="opt";
+    if(showFb){if(oi===0)cls+=" ok";else if(it.ans===oi)cls+=" no"}
+    else if(it.ans===oi)cls+=" sel";
+    return `<button type="button" class="${cls}" data-act="pick" data-oi="${oi}" ${showFb?"disabled":""}><span class="k">${L[pos]}</span><span>${esc(q.o[oi])}</span></button>`}).join("");
+  const right=answered&&it.ans===0;
+  const fb=showFb?`<div class="expl ${right?"good":"bad"}"><b class="v">${right?"Helyes":"Nem ez a jó válasz"}</b>${right?"":`<div class="ans-line">Helyes: <b>${L[it.order.indexOf(0)]}</b></div>`}<div>${esc(q.e)}</div></div>`:"";
+  const head=`<div class="qhead"><div class="row"><span class="chip">${esc(TMAP[q.t].n)}</span>${q.z?`<span class="chip zh">tanári példa alapján</span>`:""}${it.retry?`<span class="chip">újrakérdezés</span>`:""}</div>
+     ${S.deadline?`<span class="timer" id="timer">--:--</span>`:(S.mode==="topic"?"":`<span class="chip">${esc(S.title)}</span>`)}</div>`;
+  const pr=`<div class="prog" role="progressbar" aria-valuemin="0" aria-valuemax="${n}" aria-valuenow="${S.idx+1}"><i style="width:${100*(S.idx+(showFb?1:0))/n}%"></i></div>`;
+  let nav="";
+  if(S.feedback){
+    nav=`<div class="row"><button class="btn" type="button" data-act="next" ${answered?"":"disabled"}>${S.idx===n-1?"Eredmény":"Következő"}</button><span class="note">${S.idx+1} / ${n} · billentyűk: A–D / 1–4 válasz, Enter tovább</span><button class="btn ghost small" type="button" data-act="quit" style="margin-left:auto">Kilépés</button></div>`;
+  }else{
+    const grid=S.items.map((x,i)=>`<button type="button" data-act="goto" data-i="${i}" class="${x.ans!==null?"done":""} ${i===S.idx?"cur":""}" aria-label="${i+1}. kérdés${x.ans!==null?", megválaszolva":""}">${i+1}</button>`).join("");
+    const unans=S.items.filter(x=>x.ans===null).length;
+    nav=`<div class="qgrid">${grid}</div>
+      <div class="row"><button class="btn ghost" type="button" data-act="prev" ${S.idx===0?"disabled":""}>Előző</button>
+      <button class="btn ghost" type="button" data-act="next" ${S.idx===n-1?"disabled":""}>Következő</button>
+      <button class="btn" type="button" data-act="finish" style="margin-left:auto">Beadás${unans?` (${unans} üres)`:""}</button></div>`;
+  }
+  return `<section class="card" style="display:flex;flex-direction:column;gap:16px">${head}${pr}<div class="qtext">${S.idx+1}. ${esc(q.q)}</div><div class="opts" role="group" aria-label="Válaszlehetőségek">${opts}</div>${fb}${nav}</section>`;
+}
+function pick(oi){
+  const it=S.items[S.idx];
+  if(S.feedback){
+    if(it.ans!==null)return;
+    it.ans=oi;const ok=oi===0;rec(it.q,ok);
+    if(!ok&&!S.retried[it.q.id]){S.retried[it.q.id]=1;const c=prep(it.q);c.retry=true;S.items.push(c)}
+  }else{it.ans=oi}
+  render(true);
+}
+function next(){
+  if(S.feedback){
+    if(S.items[S.idx].ans===null)return;
+    if(S.idx>=S.items.length-1)return finish();
+    S.idx++;render();
+  }else if(S.idx<S.items.length-1){S.idx++;render()}
+}
+function finish(){
+  if(!S||S.done)return;S.done=true;
+  if(timerId){clearInterval(timerId);timerId=null}
+  if(!S.feedback){S.items.forEach(x=>{if(x.ans!==null)rec(x.q,x.ans===0)})}
+  const base=S.items.filter(x=>!x.retry);
+  const correct=base.filter(x=>x.ans===0).length;
+  S.result={n:base.length,correct,mins:Math.round((Date.now()-S.start)/60000)};
+  store.hist.push({t:Date.now(),mode:S.mode,n:base.length,c:correct});if(store.hist.length>200)store.hist.shift();save();
+  setView("result");
+}
+function gradeOf(p){return p>=88?5:p>=76?4:p>=63?3:p>=48?2:1}
+function resultHTML(){
+  const r=S.result,p=100*r.correct/r.n,g=gradeOf(p);
+  const base=S.items.filter(x=>!x.retry);
+  const bt={};base.forEach(x=>{const b=bt[x.q.t]||(bt[x.q.t]={n:0,c:0});b.n++;if(x.ans===0)b.c++});
+  const wrong=base.filter(x=>x.ans!==0);
+  const sim=S.mode==="sim";
+  const rows=Object.keys(bt).map(k=>`<tr><td>${esc(TMAP[k].n)}</td><td class="n">${bt[k].c} / ${bt[k].n}</td><td class="n">${Math.round(100*bt[k].c/bt[k].n)}%</td></tr>`).join("");
+  const rev=wrong.map(x=>{const q=x.q;return `<div class="review-item"><div class="row"><span class="chip">${esc(TMAP[q.t].n)}</span>${q.z?`<span class="chip zh">tanári példa alapján</span>`:""}</div>
+    <div class="qtext" style="font-size:17px">${esc(q.q)}</div>
+    ${x.ans===null?`<div class="ans-line"><b>Nem válaszoltál.</b></div>`:`<div class="ans-line" style="color:var(--bad)">A te válaszod: ${esc(q.o[x.ans])}</div>`}
+    <div class="ans-line" style="color:var(--good)">Helyes válasz: <b>${esc(q.o[0])}</b></div>
+    <div class="expl">${esc(q.e)}</div></div>`}).join("");
+  return `
+  <section class="card" style="display:flex;flex-direction:column;gap:16px">
+    <h2>${esc(S.title)} · eredmény</h2>
+    <div class="result-big">
+      ${sim?`<div class="grade ${g===1?"bad":""}" aria-label="Jegy: ${g}">${g}</div>`:""}
+      <div><div class="pct">${r.correct} / ${r.n}</div><div class="sub">${Math.round(p)}%${sim?" · jegy a tárgy követelményei szerint (88% jeles, 76% jó, 63% közepes, 48% elégséges)":""}</div></div>
+    </div>
+    <div class="row"><button class="btn" type="button" data-act="start" data-mode="${S.mode}" ${S.mode==="topic"?`data-t="${esc(S.items[0].q.t)}"`:""}>Újra</button>
+    <button class="btn ghost" type="button" data-act="nav" data-v="home">Kezdőlap</button></div>
+  </section>
+  <section class="card"><h3 style="margin-bottom:10px">Témakörönként</h3><div class="tw"><table><thead><tr><th>Téma</th><th class="n">Pont</th><th class="n">%</th></tr></thead><tbody>${rows}</tbody></table></div></section>
+  <section class="card" style="display:flex;flex-direction:column;gap:14px"><h3>${wrong.length?`Átnézendő kérdések (${wrong.length})`:"Hibátlan kör"}</h3>${wrong.length?rev:`<p class="empty">Nincs mit átnézni. A hibás válaszaid egyébként automatikusan bekerülnek a Hibanaplóba.</p>`}</section>`;
+}
+
+/* ===== statisztika ===== */
+function statsHTML(){
+  const h=store.hist.slice(-12).reverse();
+  const mn={practice:"Okos gyakorlás",zh:"Tanári példák",errors:"Hibanapló",topic:"Témakör",sim:"ZH-szimuláció"};
+  const rows=h.map(x=>{const d=new Date(x.t);return `<tr><td class="n">${d.getMonth()+1}. ${d.getDate()}. ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}</td><td>${mn[x.mode]||x.mode}</td><td class="n">${x.c} / ${x.n}</td><td class="n">${Math.round(100*x.c/x.n)}%</td></tr>`}).join("");
+  const weak=BANK.filter(isWeak).sort((a,b)=>stat0(b).no-stat0(a).no).slice(0,10);
+  return `<section class="card"><h2 style="margin-bottom:12px">Legutóbbi körök</h2>${h.length?`<div class="tw"><table><thead><tr><th>Mikor</th><th>Mód</th><th class="n">Pont</th><th class="n">%</th></tr></thead><tbody>${rows}</tbody></table></div>`:`<p class="empty">Még nincs befejezett kör.</p>`}</section>
+  <section class="card"><h2 style="margin-bottom:12px">Legtöbbet tévesztett kérdések</h2>${weak.length?`<div class="tw"><table><thead><tr><th>Kérdés</th><th class="n">Hiba</th></tr></thead><tbody>${weak.map(q=>`<tr><td>${esc(q.q)}</td><td class="n">${stat0(q).no}</td></tr>`).join("")}</tbody></table></div>`:`<p class="empty">Nincs hibás kérdésed.</p>`}</section>
+  <section class="card"><h3 style="margin-bottom:8px">Haladás törlése</h3>
+    <div class="row"><button class="btn ghost" type="button" data-act="reset1" id="resetBtn">Haladás törlése</button><span class="note" id="resetNote">Ez minden statisztikát töröl ebben a böngészőben.</span></div></section>`;
+}
+
+/* ===== puska ===== */
+function T(head,rows){return `<div class="tw"><table><thead><tr>${head.map((h,i)=>`<th${i>0&&head.length>2&&/^#/.test(h)?' class="n"':""}>${h.replace(/^#/,"")}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`}
+function cheatHTML(){
+  const S1=`
+  <details open><summary>Követelmények és jegyek</summary><div class="in">
+    ${T(["Teljesítmény","Jegy"],[["0–47%","elégtelen (1)"],["48–62%","elégséges (2)"],["63–75%","közepes (3)"],["76–87%","jó (4)"],["88–100%","jeles (5)"]])}
+    <ul><li>Két tesztes ZH: előre láthatóan <b>okt. 19.</b> és <b>dec. 7.</b> (előadás időpontjában). Javítás: csak egy ZH, <b>dec. 14.</b></li>
+    <li>Vizsgára bocsátás: legalább az egyik ZH min. elégséges.</li>
+    <li><b>Megajánlott jegy:</b> legfeljebb 1 ZH javítása/pótlása, mindkét ZH min. elégséges, és az eredmények átlaga ≥ 63%.</li>
+    <li>A tanár szerint lesznek a kiadott példákon kívüli tesztkérdések is, ezért tanuld a diasorok végén lévő vizsgakérdéseket.</li></ul>
+    <div class="tip"><b>Gyors stratégia:</b> 1) Tanári példatípusok mód, 2) a Puska számai és táblázatai, 3) naponta egy Okos gyakorlás, 4) a ZH előtt két ZH-szimuláció.</div>
+  </div></details>
+
+  <details><summary>Számok, amiket fejből kell tudni</summary><div class="in">
+    <h3>Egészségügyi határértékek (4/2011 VM, 1. melléklet), µg/m³</h3>
+    ${T(["Anyag","1 órás","24 órás","Éves"],[["SO₂","250","125","50"],["NO₂","100","85","40"],["CO","10 000","5 000 (napi 8 órás mozgó átlag max.)","3 000"],["PM₁₀","–","50","40"],["PM₂,₅","–","–","18"],["Benzol","–","10","5"],["Ózon","–","120 (napi 8 órás mozgó átlag max.)","–"],["Ólom / higany","–","0,3 / 1","–"]])}
+    <h3>Tájékoztatási és riasztási küszöb (3. melléklet), µg/m³</h3>
+    ${T(["Anyag","Tájékoztatási","Riasztási"],[["SO₂ (1 h)","400","500"],["NO₂ (1 h)","350","400"],["CO (1 h)","20 000","30 000"],["PM₁₀ (24 h)","75","100"],["Ózon (1 h)","180","240"]])}
+    <ul><li>SO₂, NO₂, CO, ózon: <b>3 egymást követő órában</b> kell meghaladni; PM₁₀: 2 egymást követő napon.</li>
+    <li>Veszélyességi fokozatok: I. különösen, II. fokozottan (CO), III. veszélyes (SO₂, PM₁₀), IV. mérsékelten veszélyes.</li>
+    <li>Mellékletek: 1. egészségügyi határértékek, 3. tájékoztatási/riasztási küszöb, 6. általános technológiai kibocsátási határérték, 7. eljárás-specifikus.</li></ul>
+    <h3>GWP (azonos tömegű CO₂-höz viszonyítva)</h3>
+    ${T(["Gáz","Élettartam (év)","GWP 20 év","GWP 100 év","GWP 500 év"],[["CO₂","50–200","1","1","1"],["CH₄","12","72","25","7,6"],["N₂O","114","289","298","153"],["CFC-12","100","11 000","10 900","5 200"],["CF₄","50 000","5 210","7 390","11 200"],["SF₆","3 200","16 300","22 800","32 600"],["NF₃","740","12 300","17 200","20 700"]])}
+    <p class="note">Sorrend növekvő GWP szerint: CO₂ &lt; CH₄ &lt; N₂O &lt; HFC-k &lt; SF₆ (és a szintetikus gázok általában a CO₂ többezerszeresei).</p>
+    <h3>Egyéb fontos számok</h3>
+    ${T(["Mi","Érték"],[["Levegő összetétele","N₂ 78% · O₂ 21% · Ar 0,9% · CO₂ 0,04% (~420 ppm)"],["Vízgőz","akár 4 v/v%"],["Troposzféra","~80% tömeg, –0,6 °C/100 m, tropopauza 7–17 km (≈ –55 °C)"],["Normál esővíz pH","~5,5 (szénsav); savas eső extrém esetben pH 2–2,5"],["pH 2 vs pH 5","1000-szer nagyobb savkoncentráció (logaritmikus skála)"],["Dobson-egység","1 DU = 0,01 mm; 300 DU = 3 mm; ózonlyuk &lt; 220 DU (rekord: 73 DU, 1994)"],["Egy Cl atom","több tízezer – több százezer O₃-at bont; a Br ~45× hatékonyabb"],["Mélytengeri halálzóna","oldott O₂ &lt; 2 mg/L; ~150 db, 1990 óta duplázódott"],["Csendes-óc. szemétsziget","~2,5 millió km² (2017), főleg mikroszkopikus műanyag"],["Euro NOx (g/km)","Euro-3 (2001) 0,5 · Euro-4 (2006) 0,25 · Euro-6 (2015) 0,08"],["Dízel kéntartalom","EU: 10–15 ppm S; hajók (IMO 2020): 0,5 m/m%, ECA-ban 0,1 m/m%"],["Részecskeméret (diszperz)","durva &gt; 500 nm · kolloid 1–500 nm · valódi oldat 0,1–1 nm"],["PM₁₀ / PM₂,₅","&lt; 10 µm / &lt; 2,5 µm; haj 50–70 µm"],["Szövetszűrő","&gt; 99% 0,1–0,01 µm-es szemcsékre is; ESP: akár 0,1 µm, max. ~800 °C; ciklon: ált. &gt; 10 µm"]])}
+  </div></details>
+
+  <details><summary>Technológiák paraméterei</summary><div class="in">
+    ${T(["Eljárás","Lényeg és körülmények"],[
+     ["HDS (hidrodeszulfurizálás)","katalitikus kéntelenítő <b>hidrogénezés</b>; szerves S → H₂S; 300–400 °C, 40–70 bar H₂; Mo (vagy W) kat. + Co/Ni; cél &lt; 10 ppm S"],
+     ["Claus","H₂S 1/3-át SO₂-vé égetik, majd 2/3 H₂S + SO₂ → elemi S; <b>Fe₂O₃ / Al₂O₃</b> (régen bauxit); ~500 °C, 50 bar; Százhalombatta ~80 000 t S/év (kénsav, gumivulkanizálás, fungicid)"],
+     ["Fluidágyas kazán","mészkő + szénpor fluidizált homokágyban: CaCO₃ + SO₂ + ½O₂ → CaSO₄ + CO₂ (direkt); CaCO₃ → CaO → CaSO₄ (indirekt)"],
+     ["SO₂ abszorpció","mészkőszuszpenzió / meszes víz (Ca(OH)₂) → CaSO₃ → CaSO₄ = <b>gipsz</b> (&gt; 95% kénmentesítés); alternatíva: NaOH, Na₂CO₃, NaHCO₃"],
+     ["SO₂ adszorpció","aktív szén (400 °C-on regenerálás, kénsav elpárolog), vas-oxid (90–95%), cink-ferrit (ZnFe₂O₄, 99%; H₂S is)"],
+     ["Venturi-mosó","nagy toroksebesség, finom cseppek; jó porleválasztás 1 µm alatt is; rövid tartózkodási idő → kémiai reakcióval kísért abszorpció"],
+     ["NSCR","gépjármű-konverter: Pt, Rh, Pd; 400–600 °C; Rh: NOx → N₂ (redukció); Pt/Pd: CO, CₓHᵧ oxidáció"],
+     ["SCR","<b>NH₃</b> (személyautóban karbamid / AdBlue 32,5%); MnOₓ, CrOₓ, Pt, Pd, zeolit; 150–450 °C; → N₂ + H₂O; NOx 1–5 ppm"],
+     ["Primer NOx-csökkentés","égésszabályozás (T, O₂), N-tartalom csökkentése; termikus NOx (N₂+O₂ magas T-n) vs tüzelőanyag-NOx"]])}
+    <p class="note">SCR története: 1970-es évek Japán, 1980-as évek Európa (erőművek), 1990-es évek USA, 2004 első mobil egység (Nissan), személyautó: Euro-5 idején, Euro-6-tól elterjedt, főleg dízel.</p>
+  </div></details>
+
+  <details><summary>Alapműveletek: melyik mire való?</summary><div class="in">
+    ${T(["Művelet","Egy mondatban"],[
+     ["Ülepítés","erő hatására a részecske elmozdul; gravitáció/centrifuga: sűrűségkülönbség; elektrosztatikus tér: töltéskülönbség"],
+     ["Stokes","v = d²·(ρ_rész − ρ_közeg)·g / (18·η); centrifugánál g helyett r·ω², ω = 2πn; az <b>átmérő négyzetesen</b> számít"],
+     ["Ülepítők","porülepítő kamra, Lipcsei-típusú medence, Dorr, Dortmundi"],
+     ["Centrifugák","szakaszos dob, szuper, csigás (víztelenítő): forog a dob, lamináris ülepedés"],
+     ["Ciklon","álló dob, fluidum körpályára kényszerül, turbulens → kisebb élesség; nincs forgó alkatrész; ↑ térfogatáram → ↓ határszemcse, ↑ hatásfok (↑ nyomásesés)"],
+     ["Szűrés","<b>mélységi</b> és <b>felületi</b>; koncentrátum (iszap) + szűrlet (permeátum)"],
+     ["Flotálás","légbuborék a részecskén → kisebb sűrűség → felúszik → lefölözik"],
+     ["Szita / rosta","méret szerint (szilárd-szilárd)"],
+     ["Mágneses","fémszennyezés eltávolítás, vasérc dúsítás; dia- (taszít), para- (vonz), ferromágneses (nagyon vonz)"],
+     ["Elektrosztatikus","műanyaghulladék szelektív elkülönítése; töltés: érintkeztetés, vezetékes indukció, ionbombázás"],
+     ["Abszorpció","gáz oldódik folyadékban; Henry: c = H·p; ellentéte a deszorpció; tányéros / töltetes"],
+     ["Desztilláció","illékonyabb komponens feldúsul a gőzben; <b>rektifikálás</b> = ismételt desztilláció (kondenzál → újra párologtat)"],
+     ["Extrakció","oldat komponense átmegy az oldattal nem elegyedő oldószerbe; <b>extraktum</b> (oldószer + kivont anyag), <b>raffinátum</b> (maradék); kis koncentrációnál előtisztításként"],
+     ["Adszorpció","gáz/gőz/oldat megkötése <b>szilárd</b>, nagy fajlagos felületű porózus anyagon; aktív szén 500–1500 m²/g; Langmuir: monomolekuláris, BET: több réteg"],
+     ["Jó adszorbens","nagy fajlagos felület; kis koncentrációnál is aktív; könnyű deszorpció; aktivitás és szilárdság megmarad regenerálás után; vegyileg ellenálló"]])}
+    <h3>Heterogén diszperz rendszerek</h3>
+    ${T(["Diszpergált rész","Közeg: folyadék","Közeg: gáz"],[["Gáz","Hab (lioszol)","–"],["Folyadék","Emulzió","Köd (aeroszol)"],["Szilárd","Szuszpenzió (szol)","Füst (aeroszol)"]])}
+    <p class="note">Hidrodinamikai paraméterek: koncentráció (g/m³, mg/L = ppm, µg/L = ppb), sűrűség, viszkozitás; részecske alakja, mérete, méreteloszlása (mono-, hetero-, polidiszperz).</p>
+  </div></details>
+
+  <details><summary>Alapfogalmak, BAT, IPPC</summary><div class="in">
+    ${T(["Fogalom","Jelentés"],[
+     ["Emisszió","kibocsátás (g/óra); pont-, épület-, felületi forrásból"],["Transzmisszió","terjedés, eloszlás, felhígulás"],["Immisszió","levegőterheltségi szint, koncentráció (µg/m³)"],
+     ["Pontforrás / épületforrás / felületi","kémény, cső / természetes huzatú szellőzők, fali nyílások / vörösiszap-tároló, burkolatlan szállítószalag"],
+     ["IPPC","Integrated Pollution Prevention and Control; integrált (levegő + víz + talaj); IED 2010/75/EU (korábban 96/61/EK)"],
+     ["BAT","Best Available Techniques: <b>legjobb</b> = leghatékonyabb a környezet egészének védelmében; <b>elérhető</b> = elfogadható műszaki és gazdasági feltételek mellett; kipróbált, alkalmazható. A <i>kis termelési kapacitás</i> NEM tartozik bele."],
+     ["BREF","BAT referenciadokumentum; az engedélyköteles létesítményeknek meg kell felelniük"],
+     ["LCA","életciklus-elemzés: nyersanyag → gyártás → szállítás → használat → újrahasznosítás/ártalmatlanítás"],
+     ["Szennyezés csökkentése","1. forrás megszüntetése, 2. emisszió szabályozása (cső végén), 3. immisszió utólagos kezelése"],
+     ["EKHE","egységes környezethasználati engedély; 314/2005. Korm. rend."],
+     ["Határérték-túllépés","ha hígítással érik el a határérték betartását"]])}
+  </div></details>
+
+  <details><summary>Egyezmények időrendben</summary><div class="in">
+    ${T(["Év","Esemény","Lényeg"],[
+     ["1962","Carson: Néma tavasz","zöldmozgalom kezdete; DDT: Magyarország 1968, USA 1972"],
+     ["1970","Első Föld Napja (ápr. 22.)","Denis Hayes"],
+     ["1972","Stockholm, ENSZ 1. konferencia","UNEP, Stockholmi Nyilatkozat, jún. 5. Környezetvédelmi Világnap; Növekedés határai (Római Klub, MIT)"],
+     ["1979","Genf","keretegyezmény a határon átterjedő légszennyezésről"],
+     ["1985","Helsinki / Bécs","S-kibocsátás −30% / ózonvédelmi keretegyezmény"],
+     ["1987","Montreal / Közös Jövőnk","CFC-k csökkentése / fenntartható fejlődés fogalma (Brundtland)"],
+     ["1992","Rio","Agenda 21; biodiverzitási és éghajlatváltozási keretegyezmény; „közös, de megkülönböztetett felelősség”"],
+     ["1997","Kiotó","első jogilag kötelező ÜHG-csökkentés; bázis 1990; 6 gáz; emissziókereskedelem"],
+     ["1999","Gothenburg","2010-ig: S −63%, NOx −41%, VOC −40%, NH₃ −17%"],
+     ["2002","Johannesburg","fenntartható fejlődés világkonferencia (3.)"],
+     ["2009","Koppenhága","kudarc, csak politikai nyilatkozat"],
+     ["2012","Rio+20","nem született kötelező megállapodás"],
+     ["2015","Párizs","195 ország, 2020-tól; EU: −40% 2030-ig (1990-hez)"],
+     ["2016","Kigali","HFC-k visszaszorítása (fejlett országok 2019-től); EU: 2050-re HFC-mentes"],
+     ["2021","Glasgow (COP26)","szén szakaszos csökkentése, metán −30% (2030), erdőirtás megállítása"]])}
+  </div></details>
+
+  <details><summary>Légkör, szmog, savas eső</summary><div class="in">
+    ${T(["Réteg","Magasság","Jellemző"],[
+     ["Troposzféra","~0–7/17 km","időjárás, ~80% tömeg, hőmérséklet ↓"],["Sztratoszféra","~50 km-ig","hőmérséklet ↑, stabil, ózonréteg"],["Mezoszféra","~50–90 km","meteorok égnek el"],["Termoszféra","90–500/1000 km","500–2000 °C, ISS, műholdak"],["Exoszféra","~2000 km-ig","H és He szökik"]])}
+    <p class="note">Homoszféra (tro+szt+mez, ~110 km-ig állandó összetétel) és heteroszféra.</p>
+    ${T(["","Fotokémiai (Los Angeles)","Londoni (téli)"],[
+     ["Időjárás","magas T, napfény (UV), alacsony páratartalom","alacsony T, magas páratartalom"],["Anyagok","NOx, CO, CₓHᵧ","por, korom, SO₂"],["Termék","ózon, oxidáló gyökök, PAN, peroxidok","H₂SO₃, H₂SO₄ a cseppekben"]])}
+    <ul><li>Savas eső: NOx → HNO₃; SO₂ → H₂SO₃, H₂SO₄. Gránit alapkőzet (kis puffer) érzékeny, karbonátos (Balaton) kevésbé.</li>
+    <li>Természetes szennyezők: por, homok, vulkáni gázok (SiO₂, H₂S, SO₂, HCl), erdőtüzek, villám (NOx), bomlás (NH₃), pollen.</li>
+    <li>Szennyezők csoportjai: S (SO₂), N (NOx), C (CO₂, CO, CₓHᵧ, PAH), VOC, halogénezett szerves (PCB), por (PM₁₀, PM₂,₅), radioaktív.</li></ul>
+  </div></details>
+
+  <details><summary>Üvegházhatás és ózon</summary><div class="in">
+    <ul><li>A Nap látható fénye átjut → felszín elnyeli → <b>nagyobb hullámhosszú (IR)</b> sugárzást bocsát ki → az ÜHG-k elnyelik.</li>
+    <li>Csak <b>heteroatomos</b> molekulák (H₂O, CO₂, CH₄, N₂O) üvegházhatásúak; N₂ és O₂ nem. Elnyelés: Lambert–Beer.</li>
+    <li>Albedó: hó/jég 60–90%, szárazföld 15–20%, nyílt víz ~10%; olvadás → kisebb albedó → több melegedés.</li>
+    <li>Források: CO₂ (fosszilis: erőmű, ipar, közlekedés), CH₄ (rizs, állattartás, hulladék, kitermelés, metán-hidrát), NOx/N₂O (erőmű, közlekedés, műtrágya), SF₆/HFC/PFC (ipar).</li>
+    <li>Csökkentés: fosszilis kiváltása; magas GWP elhagyása; mezőgazdasági reform; kilépő gázok tisztítása; metán hasznosítása/égetése (kisebb GWP); CO₂-megkötés (erdősítés, katalitikus redukció, Orca 4000 t/év, Mammoth 36 000 t/év Izlandon, bazaltba injektálás).</li>
+    <li>Ózon keletkezése: O₂ + UV (&lt; 240 nm) → 2 O; O + O₂ → O₃; O₃ + UV (&lt; 315 nm) → O₂ + O. Véd UV-C (teljesen), UV-B (nagyrészt).</li>
+    <li>Ózonbontók: CFC-k, HCFC-k, halonok (Cl, Br). Legerősebb hideg télen a sarkok felett (Antarktisz 1970-es évektől, Északi-sark 1990-es évektől).</li>
+    <li>Trópusok felett legvastagabb az ózonréteg, sarkvidéken legvékonyabb; nyáron magasabb, télen alacsonyabb.</li>
+    <li>Helyreállás: ~2030 (északi félteke), ~2050 (déli), ~2060 (Antarktisz).</li>
+    <li>Troposzférában az ózon légszennyező, ÜHG és erélyes oxidálószer.</li></ul>
+  </div></details>
+
+  <details><summary>Por és porleválasztás</summary><div class="in">
+    ${T(["Berendezés","Elv és jellemzők"],[
+     ["Porülepítő kamra","nagyobb keresztmetszet → kisebb sebesség → gravitációs ülepedés; gyenge hatásfok → előleválasztó koptató porokhoz"],
+     ["Zsalus leválasztó","ütközés, mozgási energia csökken, összetapadás → nő a szemcseméret"],
+     ["Ciklon / multiciklon","centrifugális erő; leggyakoribb mechanikus; nincs mozgó alkatrész; &gt; 10 µm; kisebb átmérő → kisebb határszemcse; ↑ sebesség → ↑ hatásfok, ↑ nyomásesés"],
+     ["Elektrosztatikus (ESP)","nagyfeszültségű DC; szóróelektróda (−), leválasztó (+); &lt; 1 µm, akár 0,1 µm; kis ellenállás, kis karbantartás, 800 °C-ig; drága, nagy helyigény; kopogtatás"],
+     ["Porszűrő (szövetszűrő)","0,1–0,01 µm, &gt; 99%; nyomásesés = szűrőréteg + porréteg ellenállása; tisztítás mechanikus / pneumatikus (sűrített levegő)"],
+     ["Gázmosó (Venturi)","nedves leválasztás; cseppleválasztó kell"]])}
+    <ul><li>Egészség: &gt; 10 µm szinte 100%-ban az orrban reked; &lt; 1 µm a tüdőbe is eljut. Halálozás: légzőszervi, érrendszeri, rákos betegségek, tüdőgyulladás (WHO 2008).</li></ul>
+  </div></details>
+
+  <details><summary>Története, jelentős események</summary><div class="in">
+    <ul><li><b>Bioakkumuláció</b> → biomagnifikáció (DDT, Hg, nehézfémek, cianidok). <b>Minamata</b>: Hg (metil-higany), Japán 1956, vegyi üzem.</li>
+    <li><b>DDT</b>: széles spektrumú, perzisztens; első tiltás Magyarország 1968, USA 1972.</li>
+    <li>Kr.e. 5. sz. Cloaca Maxima (Róma); 1306 I. Edward kőszéntilalom; 1952 londoni szmog.</li>
+    <li>Fenntartható fejlődés (1987): jelen szükségletei a jövő rovására nélkül. Megújulók ≤ regeneráció, hulladék ≤ befogadóképesség, kimerülők ésszerű üteme.</li>
+    <li><b>Eutrofizáció</b>: N, P ↑ → elalgásodás → algák elhalása → baktériumos lebontás → O₂ ↓ → halpusztulás. <b>Halálzóna</b>: O₂ &lt; 2 mg/L.</li>
+    <li>Természetvédelem: passzív (megőrző) és aktív (gyarapító); a környezetvédelemmel egyenrangú, egymást kiegészítő.</li>
+    <li>r-stratégista: gyors, sok utód, J-görbe; K-stratégista: hosszú élet, kevés utód, S-görbe.</li></ul>
+  </div></details>`;
+  return `<section class="card"><h1>Puska</h1><p class="lead" style="margin-top:8px">Minden szám és fogalom, amire a ZH-kérdések épülnek. Nyisd meg a gyakorlás előtt vagy után.</p></section><div class="cheat">${S1}</div>`;
+}
+
+/* ===== események ===== */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]");if(!b)return;
+  const a=b.dataset.act;
+  if(a==="nav"){tab=b.dataset.v;if(S&&S.deadline&&!S.done){/* futó szimuláció megszakad */ S=null}setView(b.dataset.v==="home"?"home":b.dataset.v)}
+  else if(a==="start"){
+    start(b.dataset.mode,b.dataset.t);
+  }
+  else if(a==="pick")pick(+b.dataset.oi);
+  else if(a==="next")next();
+  else if(a==="prev"){if(S.idx>0){S.idx--;render()}}
+  else if(a==="goto"){S.idx=+b.dataset.i;render()}
+  else if(a==="finish")finish();
+  else if(a==="quit"){if(S&&S.items.some(x=>x.ans!==null)){finish()}else{S=null;setView("home")}}
+  else if(a==="reset1"){
+    const bt=$("#resetBtn");
+    if(bt.dataset.armed){store={stats:{},hist:[]};save();bt.dataset.armed="";$("#resetNote").textContent="A haladás törölve.";bt.textContent="Haladás törlése"}
+    else{bt.dataset.armed="1";bt.textContent="Biztosan törlöd? Kattints újra";$("#resetNote").textContent="Ez a művelet nem vonható vissza."}
+  }
+});
+document.addEventListener("change",e=>{if(e.target.id==="simN"){simN=+e.target.value;try{localStorage.setItem(LS_KEY+"-n",String(simN))}catch(_){}}});
+document.addEventListener("keydown",e=>{
+  if(view!=="quiz"||!S||e.ctrlKey||e.metaKey||e.altKey)return;
+  const tag=(e.target.tagName||"").toLowerCase();if(tag==="select"||tag==="input")return;
+  const k=e.key.toLowerCase();let pos=-1;
+  if("1234".includes(k)&&k.length===1)pos=+k-1;else if("abcd".includes(k)&&k.length===1)pos=k.charCodeAt(0)-97;
+  if(pos>=0){const it=S.items[S.idx];pick(it.order[pos]);e.preventDefault();return}
+  if(k==="enter"||k==="arrowright"){if(tag==="button"&&k==="enter"&&e.target.dataset.act)return;next();e.preventDefault()}
+  else if(k==="arrowleft"&&!S.feedback&&S.idx>0){S.idx--;render()}
+});
+$("#themeBtn").addEventListener("click",()=>{
+  const r=document.documentElement,cur=r.dataset.theme||"auto",nx=cur==="auto"?"dark":cur==="dark"?"light":"auto";
+  if(nx==="auto")delete r.dataset.theme;else r.dataset.theme=nx;
+  try{localStorage.setItem(LS_THEME,nx)}catch(_){}
+  $("#themeBtn").textContent="◐ "+({auto:"téma: auto",dark:"téma: sötét",light:"téma: világos"})[nx];
+});
+try{const th=localStorage.getItem(LS_THEME);if(th&&th!=="auto"){document.documentElement.dataset.theme=th;$("#themeBtn").textContent="◐ téma: "+(th==="dark"?"sötét":"világos")}}catch(_){}
+render();
+</script>
+
+</body></html>
